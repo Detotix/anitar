@@ -1,2 +1,3 @@
 chars/**
 .vscode/
+__pycache__/
