@@ -1,3 +1,5 @@
 chars/**
+!chars/beispielchar1/**
+!chars/beispielchar1
 .vscode/
 __pycache__/
