@@ -1,5 +1,5 @@
 {
-    "select":"beispielchar1",
-    "size":"400x400",
-    "addition":100
+    "addition": 100,
+    "select": "beispielchar1",
+    "size": "400x400"
 }

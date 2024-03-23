@@ -1,3 +1,6 @@
+import tkinter as tk
+import os
+import json
 def event(eventname,eventdict):
     try:
         if eventdict[eventname]["type"]=="ticker":
@@ -17,7 +20,7 @@ def event(eventname,eventdict):
             imgdisplaytime=eventdict[eventname]["time"]*100/eventdict[eventname]["imgcount"]
             image=eventdict[eventname]["timeticked"]*100//imgdisplaytime
             if int(image+1)>eventdict[eventname]["imgcount"]-1:
-                raise("this isn't an error")
+                raise RuntimeError("this isn't an error")
             return f"display:{int(image+1)}", [0,0]
     except:
         return "display:0", [0,0] 
@@ -29,14 +32,55 @@ def runevents(eventlist,eventdict):
         try:
             if eventdict[event]["type"] in ["cycle","ticker"]:
                 if eventdict[event]["timeticked"]>=eventdict[event]["time"]:
-                    if eventdict[event]["timeslept"]>=eventdict[event]["sleep"]:
-                        del eventdict[event]
-                        del eventlist[num-1]
-                    else:
+                    try:
+                        if eventdict[event]["timeslept"]>=eventdict[event]["sleep"]:
+                            
+                            del eventdict[event]
+                            del eventlist[num-1]
+                        else:
+                            eventdict[event]["timeslept"]+=0.005
+                    except:
                         eventdict[event]["timeslept"]+=0.005
                 else:
                     eventdict[event]["timeticked"]+=0.005
         except:
-            eventdict[event]["timeticked"]=+0
-            eventdict[event]["timeslept"]=+0
+            eventdict[event]["timeticked"]+=0.0
+            eventdict[event]["timeslept"]=0.0
     return eventlist, eventdict
+def menu(event, root):
+    b=open("settings.json", "r")
+    add=json.loads(b.read())["addition"]
+    new_window = tk.Toplevel(root)
+    new_window.title("New Window")
+    new_window.geometry("300x200")
+    new_window.resizable(False, False)
+    
+    number_label = tk.Label(new_window, text="Loudness Increment:")
+    number_label.pack(pady=7)
+    number_entry = tk.Entry(new_window)
+    number_entry.pack(pady=7)
+    
+    
+    selection_label = tk.Label(new_window, text="select char:")
+    selection_label.pack(pady=7)
+    
+    
+    options = os.listdir("chars/")
+    selected_option = tk.StringVar(new_window)
+    selected_option.set(options[0]) 
+    selection_menu = tk.OptionMenu(new_window, selected_option, *options)
+    selection_menu.pack(pady=7)
+    
+    
+    def save_data():
+        
+        loudness_increment = number_entry.get()
+        selected_character = selected_option.get()
+        if not loudness_increment:
+            loudness_increment = str(add)
+        save={"select":selected_character,"size":"400x400","addition":int(loudness_increment)}
+        a=open("settings.json","w")
+        a.write(json.dumps(save, indent=4, sort_keys=True))
+        a.close()
+    save_button = tk.Button(new_window, text="Save", command=save_data)
+    save_button.pack(pady=10)

@@ -9,17 +9,18 @@ t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon=True
 t1.start()
 def maineventhandler():
-    global eventlist, eventdict
+    global eventlist, eventdict, charbase
     eventlist = []
     eventdict = {}
     while True:
         sleep(0.02)
         try:
             eventlist, eventdict=events.runevents(eventlist,eventdict)
-        except:
-            pass
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
 
-global eventdict, eventlist
+global eventdict, eventlist, charbase
 eventlist=[]
 eventdict={}
 def update_image():
@@ -47,8 +48,8 @@ def update_image():
         for i, layer in enumerate(charbase["layers"]):
             if layer["event"]=="audio":
                 for num, imgfile in enumerate(layer["imagefiles"][::-1]):
-                    difference=layer["imagefiles"].__len__()*layer["loudnessdifference"]
-                    if volume>difference-(num*layer["loudnessdifference"]) or num+1==layer["imagefiles"].__len__():
+                    difference=len(layer["imagefiles"])*layer["loudnessdifference"]
+                    if volume>difference-(num*layer["loudnessdifference"]) or num+1==len(layer["imagefiles"]):
                         img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
                         imgs.append(img)
                         try:
@@ -72,14 +73,25 @@ def update_image():
                     eventdict[layer["event"]]=charbase["events"][layer["event"]]
                     if layer["event"] in eventlist:
                         do=events.event(layer["event"],eventdict)
-                        if do.split(":")[0]=="display":
-                            imgfile=layer["imagefiles"][int(do.split(":")[1])]
-                            img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                            imgs.append(img)
-                            try:
-                                seimages.append(charbase["sideevents"][layer["event"]])
-                            except:
-                                seimages.append(0)
+                        try:
+                            if do.split(":")[0]=="display":
+                                imgfile=layer["imagefiles"][int(do.split(":")[1])]
+                                img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
+                                imgs.append(img)
+                                try:
+                                    seimages.append(charbase["sideevents"][layer["event"]])
+                                except:
+                                    seimages.append(0)
+                        except:
+                            do="display:0"
+                            if do.split(":")[0]=="display":
+                                imgfile=layer["imagefiles"][int(do.split(":")[1])]
+                                img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
+                                imgs.append(img)
+                                try:
+                                    seimages.append(charbase["sideevents"][layer["event"]])
+                                except:
+                                    seimages.append(0)
         for i, img in enumerate(imgs):
             x=0
             y=0
@@ -95,6 +107,7 @@ def update_image():
 root = tk.Tk()
 canvas = tk.Canvas(root, width=int(json.loads(open("settings.json", "r").read())["size"].split("x")[0]), height=int(json.loads(open("settings.json", "r").read())["size"].split("x")[1]), highlightthickness=0)
 canvas.pack()
+root.bind('<Escape>', lambda event: events.menu(event, root))
 root.resizable(False, False)
 root.iconbitmap('app.ico')
 t2 = threading.Thread(target=maineventhandler)
