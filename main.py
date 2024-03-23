@@ -33,11 +33,11 @@ def update_image():
     canvas.delete('all')
     imgs=[]
     settings=json.loads(open("settings.json", "r").read())
-    root.geometry(settings["size"])
     selection=str(settings["select"])
     root.title("anitar 4 character "+selection)
     charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())
     seimages=[]
+    root.geometry(charbase["size"])
     try:
         canvas.configure(bg=charbase["backcolor"])
     except:
