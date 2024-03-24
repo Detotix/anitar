@@ -105,7 +105,7 @@ def update_image():
     root.after(50, update_image)
 
 root = tk.Tk()
-canvas = tk.Canvas(root, width=int(json.loads(open("settings.json", "r").read())["size"].split("x")[0]), height=int(json.loads(open("settings.json", "r").read())["size"].split("x")[1]), highlightthickness=0)
+canvas = tk.Canvas(root, width=400, height=400, highlightthickness=0)
 canvas.pack()
 root.bind('<Escape>', lambda event: events.menu(event, root))
 root.resizable(False, False)
