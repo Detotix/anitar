@@ -84,3 +84,16 @@ def menu(event, root):
         a.close()
     save_button = tk.Button(new_window, text="Save", command=save_data)
     save_button.pack(pady=10)
+def backwardscompatibility(name):
+    if not os.path.exists(f"chars/{name}/charbase.json"):
+        charbase={"layers": [{"event":"audio","loudnessdifference": 120,"imagefiles": []}],"size":"400x400","backcolor":"#000000"}
+        for num in range(4):
+            if os.path.exists(f"chars/{name}/{num+1}.png"):
+                charbase["layers"][0]["imagefiles"].append(f"{num+1}.png")
+
+        a=open(f"chars/{name}/charbase.json", "w")    
+        a.write(json.dumps(charbase, indent=4, sort_keys=True))
+        a.close()
+        return True
+    else:
+        return False

@@ -35,7 +35,11 @@ def update_image():
     settings=json.loads(open("settings.json", "r").read())
     selection=str(settings["select"])
     root.title("anitar 4 character "+selection)
-    charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())
+    try:
+        charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())
+    except FileNotFoundError:
+        events.backwardscompatibility(selection)
+        charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())
     seimages=[]
     root.geometry(charbase["size"])
     try:
