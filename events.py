@@ -86,13 +86,17 @@ def menu(event, root):
     save_button.pack(pady=10)
 def backwardscompatibility(name):
     if not os.path.exists(f"chars/{name}/charbase.json"):
-        charbase={"layers": [{"event":"audio","loudnessdifference": 120,"imagefiles": []}],"size":"400x400","backcolor":"#000000"}
+        charbase={"layers": [{"event":"audio","loudnessdifference": 120,"imagefiles": []}],"size":"400x400","backcolor":"#000000","events": {"mticker":{"type":"ticker","time":4,"sleep":0.05}}}
         for num in range(4):
             if os.path.exists(f"chars/{name}/{num+1}.png"):
                 charbase["layers"][0]["imagefiles"].append(f"{num+1}.png")
-
+        if os.path.exists(f"chars/{name}/conf"):
+            b=open(f"chars/{name}/conf", "r").read().split("\n")
+            for num, command in enumerate(b):
+                if command.split(" ")[0]=="ticker":
+                    charbase["layers"].append({"event":"mticker","imagefiles":[command.split(" ")[2],command.split(" ")[3]]})
         a=open(f"chars/{name}/charbase.json", "w")    
-        a.write(json.dumps(charbase, indent=4, sort_keys=True))
+        a.write(json.dumps(charbase, indent=4))
         a.close()
         return True
     else:
