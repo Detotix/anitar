@@ -44,7 +44,7 @@ def runevents(eventlist,eventdict):
                 else:
                     eventdict[event]["timeticked"]+=0.005
         except:
-            eventdict[event]["timeticked"]+=0.0
+            eventdict[event]["timeticked"]=0.0
             eventdict[event]["timeslept"]=0.0
     return eventlist, eventdict
 def menu(event, root):

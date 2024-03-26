@@ -113,7 +113,7 @@ def update_image():
     root.after(50, update_image)
 
 root = tk.Tk()
-canvas = tk.Canvas(root, width=1000, height=1000, highlightthickness=0)
+canvas = tk.Canvas(root, width=1500, height=1500, highlightthickness=0)
 canvas.pack()
 root.bind('<Escape>', lambda event: events.menu(event, root))
 root.resizable(False, False)
