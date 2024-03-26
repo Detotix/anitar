@@ -25,10 +25,6 @@ eventlist=[]
 eventdict={}
 def update_image():
     global eventdict, eventlist
-    #try:
-    #    eventlist, eventdict=events.runevents(eventlist,eventdict)
-    #except:
-    #    pass
     global volume
     canvas.delete('all')
     imgs=[]
@@ -38,10 +34,18 @@ def update_image():
     try:
         charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())
     except FileNotFoundError:
-        events.backwardscompatibility(selection)
-        charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())
+        try:
+            events.backwardscompatibility(selection)
+            charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())
+        except:
+            open("settings.json", "w").write('{"addition": -40,"select": "beispielchar1"}')
+            charbase=json.loads(open(f"chars/beispielchar1/charbase.json" ,"r").read())
+            print(charbase)
     seimages=[]
-    root.geometry(charbase["size"])
+    try:
+        root.geometry(charbase["size"])
+    except:
+        root.geometry("400x400")
     try:
         canvas.configure(bg=charbase["backcolor"])
     except:
@@ -109,7 +113,7 @@ def update_image():
     root.after(50, update_image)
 
 root = tk.Tk()
-canvas = tk.Canvas(root, width=400, height=400, highlightthickness=0)
+canvas = tk.Canvas(root, width=1000, height=1000, highlightthickness=0)
 canvas.pack()
 root.bind('<Escape>', lambda event: events.menu(event, root))
 root.resizable(False, False)
@@ -117,7 +121,6 @@ root.iconbitmap('app.ico')
 t2 = threading.Thread(target=maineventhandler)
 t2.daemon=True
 t2.start()
-# Start the first update
 update_image()
 
 root.mainloop()
