@@ -20,16 +20,20 @@ def maineventhandler():
             traceback.print_exc()
             print(e)
 
-global eventdict, eventlist, charbase
+global eventdict, eventlist, charbase, lastselection
 eventlist=[]
 eventdict={}
+lastselection=""
 def update_image():
-    global eventdict, eventlist
-    global volume
+    global eventdict, eventlist, volume, lastselection
     canvas.delete('all')
     imgs=[]
     settings=json.loads(open("settings.json", "r").read())
     selection=str(settings["select"])
+    if not lastselection==selection:
+        lastselection=selection
+        eventlist=[]
+        eventdict={}
     root.title("anitar 4 character "+selection)
     try:
         charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())

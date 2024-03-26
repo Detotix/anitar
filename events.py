@@ -2,6 +2,8 @@ import tkinter as tk
 import os
 import json
 def event(eventname,eventdict):
+    if eventdict[eventname]["type"]=="nothing":
+        return "display:0", [0,0]
     try:
         if eventdict[eventname]["type"]=="ticker":
             if eventdict[eventname]["time"]<=eventdict[eventname]["timeticked"]:
