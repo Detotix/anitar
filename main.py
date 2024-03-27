@@ -64,7 +64,7 @@ def update_image():
                     if volume>difference-(num*layer["loudnessdifference"]) or num+1==len(layer["imagefiles"]):
                         if not imgfile == "nothing":
                                     img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                                    imgs.append(img)
+                                    imgs.append([img,events.pos(volume)])
                         try:
                             seimages.append(charbase["sideevents"]["audio"])
                         except:
@@ -77,7 +77,7 @@ def update_image():
                         imgfile=layer["imagefiles"][int(do.split(":")[1])]
                         if not imgfile == "nothing":
                                     img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                                    imgs.append(img)
+                                    imgs.append([img,xy])
                         try:
                             seimages.append(charbase["sideevents"][layer["event"]])
                         except:
@@ -92,7 +92,7 @@ def update_image():
                                 imgfile=layer["imagefiles"][int(do.split(":")[1])]
                                 if not imgfile == "nothing":
                                     img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                                    imgs.append(img)
+                                    imgs.append([img,xy])
                                 try:
                                     seimages.append(charbase["sideevents"][layer["event"]])
                                 except:
@@ -108,8 +108,10 @@ def update_image():
                                 except:
                                     seimages.append(0)
         for i, img in enumerate(imgs):
-            x=0
-            y=0
+            x=img[1][0]
+            y=img[1][1]
+            print(img)
+            img=img[0]
             canvas.create_image(x, y, anchor=tk.NW, image=img)
         canvas.images = imgs
     except Exception as e:
