@@ -62,8 +62,9 @@ def update_image():
                 for num, imgfile in enumerate(layer["imagefiles"][::-1]):
                     difference=len(layer["imagefiles"])*layer["loudnessdifference"]
                     if volume>difference-(num*layer["loudnessdifference"]) or num+1==len(layer["imagefiles"]):
-                        img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                        imgs.append(img)
+                        if not imgfile == "nothing":
+                                    img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
+                                    imgs.append(img)
                         try:
                             seimages.append(charbase["sideevents"]["audio"])
                         except:
@@ -74,8 +75,9 @@ def update_image():
                     do , xy = events.event(layer["event"],eventdict)
                     if do.split(":")[0]=="display":
                         imgfile=layer["imagefiles"][int(do.split(":")[1])]
-                        img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                        imgs.append(img)
+                        if not imgfile == "nothing":
+                                    img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
+                                    imgs.append(img)
                         try:
                             seimages.append(charbase["sideevents"][layer["event"]])
                         except:
@@ -88,8 +90,9 @@ def update_image():
                         try:
                             if do.split(":")[0]=="display":
                                 imgfile=layer["imagefiles"][int(do.split(":")[1])]
-                                img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                                imgs.append(img)
+                                if not imgfile == "nothing":
+                                    img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
+                                    imgs.append(img)
                                 try:
                                     seimages.append(charbase["sideevents"][layer["event"]])
                                 except:
@@ -107,7 +110,6 @@ def update_image():
         for i, img in enumerate(imgs):
             x=0
             y=0
-            
             canvas.create_image(x, y, anchor=tk.NW, image=img)
         canvas.images = imgs
     except Exception as e:
