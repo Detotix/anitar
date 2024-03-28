@@ -1,7 +1,7 @@
 import tkinter as tk
 import os
 import json
-def pos(volume,cpos=[0,0]):
+def pos(volume,eventname="",eventdict={},cpos=[0,0]):
     return [0,0]
 def event(eventname,eventdict,volume):
     if eventdict[eventname]["type"]=="nothing":
