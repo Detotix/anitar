@@ -44,8 +44,12 @@ def update_image():
         except:
             open("settings.json", "w").write('{"addition": -40,"select": "beispielchar1"}')
             charbase=json.loads(open(f"chars/beispielchar1/charbase.json" ,"r").read())
-            print(charbase)
     seimages=[]
+    try:
+        charbase["events"]["audio"]={"type":"audio"}
+    except:
+        charbase["events"]={}
+        charbase["events"]["audio"]={"type":"audio"}
     try:
         root.geometry(charbase["size"])
     except:
@@ -72,7 +76,7 @@ def update_image():
                         break
             else:
                 if layer["event"] in eventlist:
-                    do , xy = events.event(layer["event"],eventdict)
+                    do , xy = events.event(layer["event"],eventdict,volume)
                     if do.split(":")[0]=="display":
                         imgfile=layer["imagefiles"][int(do.split(":")[1])]
                         if not imgfile == "nothing":
@@ -86,7 +90,7 @@ def update_image():
                     eventlist.append(layer["event"])
                     eventdict[layer["event"]]=charbase["events"][layer["event"]]
                     if layer["event"] in eventlist:
-                        do=events.event(layer["event"],eventdict)
+                        do , xy = events.event(layer["event"],eventdict,volume)
                         try:
                             if do.split(":")[0]=="display":
                                 imgfile=layer["imagefiles"][int(do.split(":")[1])]
@@ -102,7 +106,7 @@ def update_image():
                             if do.split(":")[0]=="display":
                                 imgfile=layer["imagefiles"][int(do.split(":")[1])]
                                 img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                                imgs.append(img)
+                                imgs.append([img,xy])
                                 try:
                                     seimages.append(charbase["sideevents"][layer["event"]])
                                 except:
@@ -110,7 +114,6 @@ def update_image():
         for i, img in enumerate(imgs):
             x=img[1][0]
             y=img[1][1]
-            print(img)
             img=img[0]
             canvas.create_image(x, y, anchor=tk.NW, image=img)
         canvas.images = imgs
