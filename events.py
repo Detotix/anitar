@@ -3,8 +3,16 @@ import os
 import json
 def pos(volume,eventname="",eventdict={},cpos=[0,0]):
     return [0,0]
-def event(eventname,eventdict,volume):
-    if eventdict[eventname]["type"]=="nothing":
+def event(eventname,eventdict,volume,imgc,ldif=100):
+    try:
+        if eventdict[eventname]["type"]=="nothing":
+            return "display:0", [0,0]
+        if eventdict[eventname]["type"]=="audio":
+            difference=imgc*ldif
+            for num in range(imgc):
+                if volume>difference-(num*ldif) or num+1==imgc:
+                    return f"display:{imgc-1-num}", [0,0]
+    except:
         return "display:0", [0,0]
     try:
         if eventdict[eventname]["type"]=="ticker":
@@ -21,16 +29,14 @@ def event(eventname,eventdict,volume):
                 return "display:0", [0,0]
     try:
         if eventdict[eventname]["type"]=="cycle":
-            imgdisplaytime=eventdict[eventname]["time"]*100/eventdict[eventname]["imgcount"]
+            imgdisplaytime=eventdict[eventname]["time"]*100/imgc
             image=eventdict[eventname]["timeticked"]*100//imgdisplaytime
-            if int(image+1)>eventdict[eventname]["imgcount"]-1:
+            if int(image+1)>imgc-1:
                 raise RuntimeError("this isn't an error")
             return f"display:{int(image+1)}", [0,0]
     except:
         return "display:0", [0,0] 
-    if eventdict[eventname]["type"]=="img":
-        return "display:0", [0,0]
-def runevents(eventlist,eventdict):
+def runevents(eventlist,eventdict,charbase):
     renew=[]
     for num, event in enumerate(eventlist):
         try:
@@ -82,7 +88,7 @@ def menu(event, root):
         selected_character = selected_option.get()
         if not loudness_increment:
             loudness_increment = str(add)
-        save={"select":selected_character,"size":"400x400","addition":int(loudness_increment)}
+        save={"select":selected_character,"addition":int(loudness_increment)}
         a=open("settings.json","w")
         a.write(json.dumps(save, indent=4, sort_keys=True))
         a.close()

@@ -12,10 +12,15 @@ def maineventhandler():
     global eventlist, eventdict, charbase
     eventlist = []
     eventdict = {}
+    charbase = {}
     while True:
+        ee=True
         sleep(0.02)
         try:
-            eventlist, eventdict=events.runevents(eventlist,eventdict)
+            for a, event in enumerate(eventlist):
+                if not event in eventdict:
+                    eventdict[event]=charbase["events"][event]
+            eventlist, eventdict=events.runevents(eventlist,eventdict,charbase)
         except Exception as e:
             traceback.print_exc()
             print(e)
@@ -25,7 +30,7 @@ eventlist=[]
 eventdict={}
 lastselection=""
 def update_image():
-    global eventdict, eventlist, volume, lastselection
+    global eventdict, eventlist, volume, lastselection,charbase
     canvas.delete('all')
     imgs=[]
     settings=json.loads(open("settings.json", "r").read())
@@ -62,55 +67,61 @@ def update_image():
         volume=max(0,loudness.volume+settings["addition"])
         
         for i, layer in enumerate(charbase["layers"]):
-            if layer["event"]=="audio":
-                for num, imgfile in enumerate(layer["imagefiles"][::-1]):
-                    difference=len(layer["imagefiles"])*layer["loudnessdifference"]
-                    if volume>difference-(num*layer["loudnessdifference"]) or num+1==len(layer["imagefiles"]):
-                        if not imgfile == "nothing":
-                                    img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                                    imgs.append([img,events.pos(volume)])
-                        try:
-                            seimages.append(charbase["sideevents"]["audio"])
-                        except:
-                            seimages.append(0)
-                        break
-            else:
-                if layer["event"] in eventlist:
-                    do , xy = events.event(layer["event"],eventdict,volume)
-                    if do.split(":")[0]=="display":
-                        imgfile=layer["imagefiles"][int(do.split(":")[1])]
-                        if not imgfile == "nothing":
-                                    img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                                    imgs.append([img,xy])
-                        try:
-                            seimages.append(charbase["sideevents"][layer["event"]])
-                        except:
-                            seimages.append(0)
-                else:
-                    eventlist.append(layer["event"])
-                    eventdict[layer["event"]]=charbase["events"][layer["event"]]
-                    if layer["event"] in eventlist:
-                        do , xy = events.event(layer["event"],eventdict,volume)
-                        try:
-                            if do.split(":")[0]=="display":
-                                imgfile=layer["imagefiles"][int(do.split(":")[1])]
-                                if not imgfile == "nothing":
-                                    img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
-                                    imgs.append([img,xy])
-                                try:
-                                    seimages.append(charbase["sideevents"][layer["event"]])
-                                except:
-                                    seimages.append(0)
-                        except:
-                            do="display:0"
-                            if do.split(":")[0]=="display":
-                                imgfile=layer["imagefiles"][int(do.split(":")[1])]
+            #if layer["event"]=="audio":
+            #    pass
+                #for num, imgfile in enumerate(layer["imagefiles"][::-1]):
+                #    difference=len(layer["imagefiles"])*layer["loudnessdifference"]
+                #    if volume>difference-(num*layer["loudnessdifference"]) or num+1==len(layer["imagefiles"]):
+                #        pass
+                        #if not imgfile == "nothing":
+                        #            img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
+                        #            imgs.append([img,events.pos(volume)])
+                        #try:
+                        #    seimages.append(charbase["sideevents"]["audio"])
+                        #except:
+                        #    seimages.append(0)
+                        #break
+            #else:
+            try:
+                layer["loudnessdifference"]
+            except:
+                layer["loudnessdifference"]=0
+            if layer["event"] in eventlist:
+                do , xy = events.event(layer["event"],eventdict,volume,len(layer["imagefiles"]),layer["loudnessdifference"])
+                if do.split(":")[0]=="display":
+                    imgfile=layer["imagefiles"][int(do.split(":")[1])]
+                    if not imgfile == "nothing":
                                 img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
                                 imgs.append([img,xy])
-                                try:
-                                    seimages.append(charbase["sideevents"][layer["event"]])
-                                except:
-                                    seimages.append(0)
+                    try:
+                        seimages.append(charbase["sideevents"][layer["event"]])
+                    except:
+                        seimages.append(0)
+            else:
+                eventlist.append(layer["event"])
+                eventdict[layer["event"]]=charbase["events"][layer["event"]]
+                if layer["event"] in eventlist:
+                    do , xy = events.event(layer["event"],eventdict,volume,len(layer["imagefiles"]),layer["loudnessdifference"])
+                    try:
+                        if do.split(":")[0]=="display":
+                            imgfile=layer["imagefiles"][int(do.split(":")[1])]
+                            if not imgfile == "nothing":
+                                img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
+                                imgs.append([img,xy])
+                            try:
+                                seimages.append(charbase["sideevents"][layer["event"]])
+                            except:
+                                seimages.append(0)
+                    except:
+                        do="display:0"
+                        if do.split(":")[0]=="display":
+                            imgfile=layer["imagefiles"][int(do.split(":")[1])]
+                            img = tk.PhotoImage(file=f'chars/{settings["select"]}/{imgfile}')
+                            imgs.append([img,xy])
+                            try:
+                                seimages.append(charbase["sideevents"][layer["event"]])
+                            except:
+                                seimages.append(0)
         for i, img in enumerate(imgs):
             x=img[1][0]
             y=img[1][1]
