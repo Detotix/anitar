@@ -48,7 +48,7 @@ def update_image():
             events.backwardscompatibility(selection)
             charbase=json.loads(open(f"chars/{selection}/charbase.json" ,"r").read())
         except:
-            open("settings.json", "w").write('{"addition": -40,"select": "beispielchar1"}')
+            open("settings.json", "w").write('{\n    "addition": 120,\n    "select": "beispielchar1"\n}')
             charbase=json.loads(open(f"chars/beispielchar1/charbase.json" ,"r").read())
     seimages=[]
     if not "events" in charbase or not "audio" in charbase["events"]:
