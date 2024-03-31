@@ -2,40 +2,44 @@ import tkinter as tk
 import os
 import json
 def pos(volume,eventname="",eventdict={},cpos=[0,0]):
-    return [0,0]
+    return [-cpos[0],-cpos[1]]
 def event(eventname,eventdict,volume,imgc,ldif=100):
     try:
+        posv=pos(volume,eventname,eventdict,eventdict[eventname]["pos"]["pos"])
+    except:
+        posv=pos(volume,eventname,eventdict,[0,0])
+    try:
         if eventdict[eventname]["type"]=="nothing":
-            return "display:0", [0,0]
+            return "display:0", posv
         if eventdict[eventname]["type"]=="audio":
             difference=imgc*ldif
             for num in range(imgc):
                 if volume>difference-(num*ldif) or num+1==imgc:
-                    return f"display:{imgc-1-num}", [0,0]
+                    return f"display:{imgc-1-num}", posv
     except:
-        return "display:0", [0,0]
+        return "display:0", posv
     try:
         if eventdict[eventname]["type"]=="ticker":
             if eventdict[eventname]["time"]<=eventdict[eventname]["timeticked"]:
-                return "display:1", [0,0]
+                return "display:1", posv
             else:
-                return "display:0", [0,0]
+                return "display:0", posv
     except:
         eventdict[eventname]["timeticked"]=0
         if eventdict[eventname]["type"]=="ticker":
             if eventdict[eventname]["time"]<=eventdict[eventname]["timeticked"]:
-                return "display:1", [0,0]
+                return "display:1", posv
             else:
-                return "display:0", [0,0]
+                return "display:0", posv
     try:
         if eventdict[eventname]["type"]=="cycle":
             imgdisplaytime=eventdict[eventname]["time"]*100/imgc
             image=eventdict[eventname]["timeticked"]*100//imgdisplaytime
             if int(image+1)>imgc-1:
                 raise RuntimeError("this isn't an error")
-            return f"display:{int(image+1)}", [0,0]
+            return f"display:{int(image+1)}", posv
     except:
-        return "display:0", [0,0] 
+        return "display:0", posv 
 def runevents(eventlist,eventdict,charbase):
     renew=[]
     for num, event in enumerate(eventlist):

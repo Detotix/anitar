@@ -50,11 +50,12 @@ def update_image():
             open("settings.json", "w").write('{"addition": -40,"select": "beispielchar1"}')
             charbase=json.loads(open(f"chars/beispielchar1/charbase.json" ,"r").read())
     seimages=[]
-    try:
-        charbase["events"]["audio"]={"type":"audio"}
-    except:
-        charbase["events"]={}
-        charbase["events"]["audio"]={"type":"audio"}
+    if not "events" in charbase or not "audio" in charbase["events"]:
+        try:
+            charbase["events"]["audio"]={"type":"audio"}
+        except:
+            charbase["events"]={}
+            charbase["events"]["audio"]={"type":"audio"}
     try:
         root.geometry(charbase["size"])
     except:
