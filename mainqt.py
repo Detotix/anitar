@@ -1,0 +1,155 @@
+import threading
+import sys
+import json
+from time import sleep
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtCore import QTimer, Qt
+import events
+import loudness
+import traceback
+import tkinter as tk
+t1 = threading.Thread(target=loudness.getloudness)
+t1.daemon = True
+t1.start()
+def keyp(event):
+    root = tk.Tk()
+    global close
+    root.withdraw()
+    if event.key() == Qt.Key_Escape:
+        close=events.menu("",root, qtv=True)
+    root.mainloop()
+def maineventhandler():
+    global eventlist, eventdict, charbase, volume, close
+    eventlist = []
+    eventdict = {}
+    charbase = {}
+    while True:
+        ee = True
+        sleep(0.02)
+        try:
+            for a, event in enumerate(eventlist):
+                if event not in eventdict:
+                    eventdict[event] = charbase["events"][event]
+            eventlist, eventdict = events.runevents(eventlist, eventdict, charbase, volume)
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
+
+global eventdict, eventlist, charbase, lastselection, volume
+eventlist = []
+eventdict = {}
+lastselection = ""
+
+def update_image():
+    global eventdict, eventlist, volume, lastselection, charbase, close
+    try:
+        if close:
+            sys.exit()
+    except Exception as e:
+        pass
+    scene.clear()
+    imgs = []
+    settings = json.loads(open("settings.json", "r").read())
+    selection = str(settings["select"])
+    if lastselection != selection:
+        lastselection = selection
+        eventlist = []
+        eventdict = {}
+    window.setWindowTitle("anitar 4 character " + selection)
+    try:
+        charbase = json.loads(open(f"chars/{selection}/charbase.json", "r").read())
+    except FileNotFoundError:
+        try:
+            events.backwardscompatibility(selection)
+            charbase = json.loads(open(f"chars/{selection}/charbase.json", "r").read())
+        except:
+            open("settings.json", "w").write('{"addition": -40,"select": "beispielchar1"}')
+            charbase = json.loads(open(f"chars/beispielchar1/charbase.json", "r").read())
+    seimages = []
+    if "events" not in charbase or "audio" not in charbase["events"]:
+        try:
+            charbase["events"]["audio"] = {"type": "audio"}
+        except:
+            charbase["events"] = {}
+            charbase["events"]["audio"] = {"type": "audio"}
+    try:
+        volume=max(0,loudness.volume+settings["addition"])
+        for i, layer in enumerate(charbase["layers"]):
+            try:
+                layer["loudnessdifference"]
+            except:
+                layer["loudnessdifference"] = 0
+            if layer["event"] in eventlist:
+                do, xy = events.event(layer["event"], eventdict, volume, len(layer["imagefiles"]), charbase,
+                                      layer["loudnessdifference"])
+                if do.split(":")[0] == "display":
+                    imgfile = layer["imagefiles"][int(do.split(":")[1])]
+                    if imgfile != "nothing":
+                        img_path = f'chars/{settings["select"]}/{imgfile}'
+                        img = QPixmap(img_path)
+                        imgs.append([img, xy])
+                    try:
+                        seimages.append(charbase["sideevents"][layer["event"]])
+                    except:
+                        seimages.append(0)
+            else:
+                eventlist.append(layer["event"])
+                eventdict[layer["event"]] = charbase["events"][layer["event"]]
+                if layer["event"] in eventlist:
+                    do, xy = events.event(layer["event"], eventdict, volume, len(layer["imagefiles"]), charbase,
+                                          layer["loudnessdifference"])
+                    try:
+                        if do.split(":")[0] == "display":
+                            imgfile = layer["imagefiles"][int(do.split(":")[1])]
+                            if imgfile != "nothing":
+                                img_path = f'chars/{settings["select"]}/{imgfile}'
+                                img = QPixmap(img_path)
+                                imgs.append([img, xy])
+                            try:
+                                seimages.append(charbase["sideevents"][layer["event"]])
+                            except:
+                                seimages.append(0)
+                    except:
+                        do = "display:0"
+                        if do.split(":")[0] == "display":
+                            imgfile = layer["imagefiles"][int(do.split(":")[1])]
+                            img_path = f'chars/{settings["select"]}/{imgfile}'
+                            img = QPixmap(img_path)
+                            imgs.append([img, xy])
+                            try:
+                                seimages.append(charbase["sideevents"][layer["event"]])
+                            except:
+                                seimages.append(0)
+        for i, img in enumerate(imgs):
+            x = img[1][0]
+            y = img[1][1]
+            img = img[0]
+            scene.addPixmap(img).setPos(x, y)
+    except Exception as e:
+        print(e, "this is an error")
+        traceback.print_exc()
+        pass
+    QTimer.singleShot(50, update_image)
+
+app = QApplication(sys.argv)
+window = QMainWindow()
+scene = QGraphicsScene()
+view = QGraphicsView(scene)
+view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+view.setStyleSheet("background: transparent; border: none;")
+scene.setBackgroundBrush(Qt.transparent)
+window.keyPressEvent = keyp
+window.setCentralWidget(view)
+window.setAttribute(Qt.WA_NoSystemBackground, True)
+window.setAttribute(Qt.WA_TranslucentBackground, True)
+window.setWindowFlags(Qt.FramelessWindowHint)
+window.setWindowIcon(QIcon('app.ico'))
+window.resize(400, 400)
+update_image()
+window.show()
+t2 = threading.Thread(target=maineventhandler)
+t2.daemon = True
+t2.start()
+sys.exit(app.exec_())

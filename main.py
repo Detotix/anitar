@@ -4,12 +4,13 @@ import events
 import loudness
 import traceback
 import json
+import ctypes
 from time import sleep
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon=True
 t1.start()
 def maineventhandler():
-    global eventlist, eventdict, charbase
+    global eventlist, eventdict, charbase,volume
     eventlist = []
     eventdict = {}
     charbase = {}
@@ -20,12 +21,12 @@ def maineventhandler():
             for a, event in enumerate(eventlist):
                 if not event in eventdict:
                     eventdict[event]=charbase["events"][event]
-            eventlist, eventdict=events.runevents(eventlist,eventdict,charbase)
+            eventlist, eventdict=events.runevents(eventlist,eventdict,charbase,volume)
         except Exception as e:
             traceback.print_exc()
             print(e)
 
-global eventdict, eventlist, charbase, lastselection
+global eventdict, eventlist, charbase, lastselection, volume
 eventlist=[]
 eventdict={}
 lastselection=""
@@ -88,7 +89,7 @@ def update_image():
             except:
                 layer["loudnessdifference"]=0
             if layer["event"] in eventlist:
-                do , xy = events.event(layer["event"],eventdict,volume,len(layer["imagefiles"]),layer["loudnessdifference"])
+                do , xy = events.event(layer["event"],eventdict,volume,len(layer["imagefiles"]),charbase,layer["loudnessdifference"])
                 if do.split(":")[0]=="display":
                     imgfile=layer["imagefiles"][int(do.split(":")[1])]
                     if not imgfile == "nothing":
@@ -102,7 +103,7 @@ def update_image():
                 eventlist.append(layer["event"])
                 eventdict[layer["event"]]=charbase["events"][layer["event"]]
                 if layer["event"] in eventlist:
-                    do , xy = events.event(layer["event"],eventdict,volume,len(layer["imagefiles"]),layer["loudnessdifference"])
+                    do , xy = events.event(layer["event"],eventdict,volume,len(layer["imagefiles"]),charbase,layer["loudnessdifference"])
                     try:
                         if do.split(":")[0]=="display":
                             imgfile=layer["imagefiles"][int(do.split(":")[1])]

@@ -1,11 +1,16 @@
 import tkinter as tk
 import os
 import json
+import traceback
 def pos(volume,eventname="",eventdict={},cpos=[0,0]):
+    if f"#{eventname}" in eventdict:
+        cpos[1]+=eventdict[f"#{eventname}"]["ypos"]
+        cpos[0]+=eventdict[f"#{eventname}"]["xpos"]
     return [-cpos[0],-cpos[1]]
-def event(eventname,eventdict,volume,imgc,ldif=100):
+def event(eventname,eventdict,volume,imgc,charbase,ldif=100):
+    print(eventdict[eventname]["pos"]["pos"])
     try:
-        posv=pos(volume,eventname,eventdict,eventdict[eventname]["pos"]["pos"])
+        posv=pos(volume,eventname,eventdict,charbase["events"][eventname]["pos"]["pos"])
     except:
         posv=pos(volume,eventname,eventdict,[0,0])
     try:
@@ -40,9 +45,36 @@ def event(eventname,eventdict,volume,imgc,ldif=100):
             return f"display:{int(image+1)}", posv
     except:
         return "display:0", posv 
-def runevents(eventlist,eventdict,charbase):
+def runevents(eventlist,eventdict,charbase,volume):
     renew=[]
+    #pos events
     for num, event in enumerate(eventlist):
+        if "#" in event:
+            continue
+        add=1
+        sub=1
+        if "add" in eventdict[event]["pos"]:
+            add=eventdict[event]["pos"]["add"]
+        if "sub" in eventdict[event]["pos"]:
+            sub=eventdict[event]["pos"]["sub"]
+        try:
+            if eventdict[event]["pos"]["type"]=="up":
+                if volume>eventdict[event]["pos"]["loudness"] and eventdict[f"#{event}"]["ypos"]<=eventdict[event]["pos"]["max"]-1:
+                    eventdict[f"#{event}"]["ypos"]+=add
+                elif volume<eventdict[event]["pos"]["loudness"] and not eventdict[f"#{event}"]["ypos"]<=0:
+                    eventdict[f"#{event}"]["ypos"]-=sub
+            if eventdict[f"#{event}"]["ypos"]>eventdict[event]["pos"]["max"]:
+                eventdict[f"#{event}"]["ypos"]=eventdict[event]["pos"]["max"]
+        except:
+            eventdict[f"#{event}"]={}
+            eventdict[f"#{event}"]["ypos"]=0
+            eventdict[f"#{event}"]["xpos"]=0
+            continue
+
+    #events
+    for num, event in enumerate(eventlist):
+        if "#" in event:
+            continue
         try:
             if eventdict[event]["type"] in ["cycle","ticker"]:
                 if eventdict[event]["timeticked"]>=eventdict[event]["time"]:
@@ -61,12 +93,16 @@ def runevents(eventlist,eventdict,charbase):
             eventdict[event]["timeticked"]=0.0
             eventdict[event]["timeslept"]=0.0
     return eventlist, eventdict
-def menu(event, root):
+def menu(event, root, qtv=False):
+    global close
     b=open("settings.json", "r")
     add=json.loads(b.read())["addition"]
     new_window = tk.Toplevel(root)
     new_window.title("New Window")
-    new_window.geometry("300x200")
+    if not qtv:
+        new_window.geometry("300x200")
+    else:
+        new_window.geometry("300x250")
     new_window.resizable(False, False)
     
     number_label = tk.Label(new_window, text="Loudness Increment:")
@@ -84,8 +120,12 @@ def menu(event, root):
     selected_option.set(options[0]) 
     selection_menu = tk.OptionMenu(new_window, selected_option, *options)
     selection_menu.pack(pady=7)
-    
-    
+    def close_p():
+        global close
+        close = True
+        root.destroy()
+    def close_root():
+        root.destroy()
     def save_data():
         
         loudness_increment = number_entry.get()
@@ -98,6 +138,12 @@ def menu(event, root):
         a.close()
     save_button = tk.Button(new_window, text="Save", command=save_data)
     save_button.pack(pady=10)
+    if qtv:
+        closee = tk.Button(new_window, text="close programm", command=close_p)
+        closee.pack(pady=10)
+        new_window.protocol("WM_DELETE_WINDOW", close_root)
+    root.mainloop()
+    return close
 def backwardscompatibility(name):
     if not os.path.exists(f"chars/{name}/charbase.json"):
         charbase={"layers": [{"event":"audio","loudnessdifference": 120,"imagefiles": []}],"size":"400x400","backcolor":"#000000","events": {"mticker":{"type":"ticker","time":4,"sleep":0.05}}}
