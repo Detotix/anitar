@@ -95,6 +95,7 @@ def runevents(eventlist,eventdict,charbase,volume):
     return eventlist, eventdict
 def menu(event, root, qtv=False):
     global close
+    close=False
     b=open("settings.json", "r")
     add=json.loads(b.read())["addition"]
     new_window = tk.Toplevel(root)
