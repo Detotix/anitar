@@ -13,13 +13,10 @@ t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
 def keyp(event):
-    root = tk.Tk()
     global close
     global window
-    root.withdraw()
     if event.key() == Qt.Key_Escape:
-        close=events.menu("",window, qtv=True)
-    root.mainloop()
+        close=events.menu("","", qtv=True)
 def maineventhandler():
     global eventlist, eventdict, charbase, volume, close
     eventlist = []
