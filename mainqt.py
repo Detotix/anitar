@@ -8,7 +8,6 @@ from PyQt5.QtCore import QTimer, Qt
 import events
 import loudness
 import traceback
-import tkinter as tk
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
