@@ -8,7 +8,6 @@ def pos(volume,eventname="",eventdict={},cpos=[0,0]):
         cpos[0]+=eventdict[f"#{eventname}"]["xpos"]
     return [-cpos[0],-cpos[1]]
 def event(eventname,eventdict,volume,imgc,charbase,ldif=100):
-    print(eventdict[eventname]["pos"]["pos"])
     try:
         posv=pos(volume,eventname,eventdict,charbase["events"][eventname]["pos"]["pos"])
     except:
@@ -49,7 +48,8 @@ def runevents(eventlist,eventdict,charbase,volume):
     renew=[]
     #pos events
     for num, event in enumerate(eventlist):
-        if "#" in event:
+        print(eventdict[event])
+        if "#" in event or not "pos" in eventdict[event]:
             continue
         add=1
         sub=1
