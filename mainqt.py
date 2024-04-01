@@ -15,9 +15,10 @@ t1.start()
 def keyp(event):
     root = tk.Tk()
     global close
+    global window
     root.withdraw()
     if event.key() == Qt.Key_Escape:
-        close=events.menu("",root, qtv=True)
+        close=events.menu("",window, qtv=True)
     root.mainloop()
 def maineventhandler():
     global eventlist, eventdict, charbase, volume, close
@@ -47,6 +48,10 @@ def update_image():
         if close:
             sys.exit()
     except Exception as e:
+        pass
+    try:
+        close=events.close
+    except:
         pass
     scene.clear()
     imgs = []
@@ -131,20 +136,26 @@ def update_image():
         traceback.print_exc()
         pass
     QTimer.singleShot(50, update_image)
-
+global window
 app = QApplication(sys.argv)
 window = QMainWindow()
 scene = QGraphicsScene()
 view = QGraphicsView(scene)
 view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-view.setStyleSheet("background: transparent; border: none;")
-scene.setBackgroundBrush(Qt.transparent)
+try:
+    if json.loads(open("settings.json").read())["transparent"]:
+        view.setStyleSheet("background: transparent; border: none;")
+        scene.setBackgroundBrush(Qt.transparent)
+        window.setWindowFlags(Qt.FramelessWindowHint)
+        window.setAttribute(Qt.WA_TranslucentBackground, True)
+    else:
+        view.setStyleSheet("border: none;")
+except:
+    view.setStyleSheet("border: none;")
+window.setAttribute(Qt.WA_NoSystemBackground, True)
 window.keyPressEvent = keyp
 window.setCentralWidget(view)
-window.setAttribute(Qt.WA_NoSystemBackground, True)
-window.setAttribute(Qt.WA_TranslucentBackground, True)
-window.setWindowFlags(Qt.FramelessWindowHint)
 window.setWindowIcon(QIcon('app.ico'))
 window.resize(400, 400)
 update_image()

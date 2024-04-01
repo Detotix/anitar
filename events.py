@@ -1,4 +1,6 @@
-import tkinter as tk
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QComboBox, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtCore import QEventLoop
+import sys
 import os
 import json
 import traceback
@@ -48,7 +50,6 @@ def runevents(eventlist,eventdict,charbase,volume):
     renew=[]
     #pos events
     for num, event in enumerate(eventlist):
-        print(eventdict[event])
         if "#" in event or not "pos" in eventdict[event]:
             continue
         add=1
@@ -93,57 +94,78 @@ def runevents(eventlist,eventdict,charbase,volume):
             eventdict[event]["timeticked"]=0.0
             eventdict[event]["timeslept"]=0.0
     return eventlist, eventdict
-def menu(event, root, qtv=False):
+def menu(ev="", root="", qtv=False):
     global close
-    close=False
-    b=open("settings.json", "r")
-    add=json.loads(b.read())["addition"]
-    new_window = tk.Toplevel(root)
-    new_window.title("New Window")
+    end=False
+    close = False
+    b = open("settings.json", "r")
+    add = json.loads(b.read())["addition"]
+    b.close()
+
+    # Check if a QApplication instance already exists
     if not qtv:
-        new_window.geometry("300x200")
+        app = QApplication(sys.argv)
     else:
-        new_window.geometry("300x250")
-    new_window.resizable(False, False)
-    
-    number_label = tk.Label(new_window, text="Loudness Increment:")
-    number_label.pack(pady=7)
-    number_entry = tk.Entry(new_window)
-    number_entry.pack(pady=7)
-    
-    
-    selection_label = tk.Label(new_window, text="select char:")
-    selection_label.pack(pady=7)
-    
-    
+        app = QApplication.instance()
+
+    new_window = QMainWindow()
+    new_window.setWindowTitle("settings")
+    new_window.setGeometry(300, 200, 300, 200 if not qtv else 250)
+    new_window.setFixedSize(new_window.size())
+
+    number_label = QLabel("Loudness Increment:")
+    number_entry = QLineEdit()
+    selection_label = QLabel("select char:")
     options = os.listdir("chars/")
-    selected_option = tk.StringVar(new_window)
-    selected_option.set(options[0]) 
-    selection_menu = tk.OptionMenu(new_window, selected_option, *options)
-    selection_menu.pack(pady=7)
+    selected_option = QComboBox()
+    selected_option.addItems(options)
+    selected_option.setCurrentIndex(0)
+
     def close_p():
         global close
         close = True
-        root.destroy()
+        end=True
+        new_window.hide()
+
     def close_root():
-        root.destroy()
+        end=True
+        new_window.hide()
+
     def save_data():
-        
-        loudness_increment = number_entry.get()
-        selected_character = selected_option.get()
+        global close
+        loudness_increment = number_entry.text()
+        selected_character = selected_option.currentText()
         if not loudness_increment:
             loudness_increment = str(add)
-        save={"select":selected_character,"addition":int(loudness_increment)}
-        a=open("settings.json","w")
-        a.write(json.dumps(save, indent=4, sort_keys=True))
-        a.close()
-    save_button = tk.Button(new_window, text="Save", command=save_data)
-    save_button.pack(pady=10)
+        save = {"select": selected_character, "addition": int(loudness_increment)}
+        with open("settings.json", "w") as a:
+            a.write(json.dumps(save, indent=4, sort_keys=True))
+        new_window.close()
+
+    save_button = QPushButton("Save")
+    save_button.clicked.connect(save_data)
+    layout = QVBoxLayout()
+    layout.addWidget(number_label)
+    layout.addWidget(number_entry)
+    layout.addWidget(selection_label)
+    layout.addWidget(selected_option)
+    layout.addWidget(save_button)
     if qtv:
-        closee = tk.Button(new_window, text="close programm", command=close_p)
-        closee.pack(pady=10)
-        new_window.protocol("WM_DELETE_WINDOW", close_root)
-    root.mainloop()
+        closee = QPushButton("close programm")
+        closee.clicked.connect(close_p)
+        layout.addWidget(closee)
+    central_widget = QWidget()
+    central_widget.setLayout(layout)
+    new_window.setCentralWidget(central_widget)
+    new_window.show()
+    if not qtv:
+        # Start the application's event loop if no QApplication instance was running
+        app.exec_()
+    else:
+        # Use a QEventLoop to wait for the window to be closed
+        loop = QEventLoop()
+        new_window.destroyed.connect(loop.quit)
+        loop.exec_()
     return close
 def backwardscompatibility(name):
     if not os.path.exists(f"chars/{name}/charbase.json"):
