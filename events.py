@@ -79,6 +79,8 @@ def runevents(eventlist,eventdict,charbase,volume):
         try:
             if eventdict[event]["type"] in ["cycle","ticker"]:
                 if eventdict[event]["timeticked"]>=eventdict[event]["time"]:
+                    if eventdict[event]["type"]=="cycle":
+                        eventdict[event]["timeticked"]=0.0
                     try:
                         if eventdict[event]["timeslept"]>=eventdict[event]["sleep"]:
                             
