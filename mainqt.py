@@ -11,6 +11,11 @@ import traceback
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
+try:
+    open("settings.json").close()
+except:
+    with open("settings.json", "w") as createsettings:
+        createsettings.write('{\n"addition": 120,\n"select": "none"\n}')
 def keyp(event):
     global close
     global window
@@ -30,8 +35,7 @@ def maineventhandler():
                     eventdict[event] = charbase["events"][event]
             eventlist, eventdict = events.runevents(eventlist, eventdict, charbase, volume)
         except Exception as e:
-            traceback.print_exc()
-            print(e)
+            pass
 
 global eventdict, eventlist, charbase, lastselection, volume
 eventlist = []
@@ -58,6 +62,16 @@ def update_image():
         eventlist = []
         eventdict = {}
     window.setWindowTitle("anitar 4 character " + selection)
+    try:
+        backgroundcolor=charbase["backcolor"]
+        window.setStyleSheet(f"background-color: {backgroundcolor};")
+    except:
+        pass
+    try:
+        size=charbase["size"].split("x")
+        window.setFixedSize(int(size[0]),int(size[1]))
+    except:
+        window.setFixedSize(400,400)
     try:
         charbase = json.loads(open(f"chars/{selection}/charbase.json", "r").read())
     except FileNotFoundError:
@@ -128,8 +142,8 @@ def update_image():
             img = img[0]
             scene.addPixmap(img).setPos(x, y)
     except Exception as e:
-        print(e, "this is an error")
-        traceback.print_exc()
+        #print(e, "this is an error")
+        #traceback.print_exc()
         pass
     QTimer.singleShot(50, update_image)
 global window
@@ -153,7 +167,7 @@ window.setAttribute(Qt.WA_NoSystemBackground, True)
 window.keyPressEvent = keyp
 window.setCentralWidget(view)
 window.setWindowIcon(QIcon('app.ico'))
-window.resize(400, 400)
+window.setFixedSize(400,400)
 update_image()
 window.show()
 t2 = threading.Thread(target=maineventhandler)
