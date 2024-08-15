@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphics
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QTimer, Qt
 import events
+import menus
 import loudness
 import traceback
 t1 = threading.Thread(target=loudness.getloudness)
@@ -20,7 +21,7 @@ def keyp(event):
     global close
     global window
     if event.key() == Qt.Key_Escape:
-        close=events.menu("","", qtv=True)
+        close=menus.settings("","", qtv=True)
 def maineventhandler():
     global eventlist, eventdict, charbase, volume, close
     eventlist = []

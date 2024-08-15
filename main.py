@@ -5,6 +5,7 @@ import loudness
 import traceback
 import json
 import ctypes
+import menus
 from time import sleep
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon=True
@@ -139,7 +140,7 @@ def update_image():
 root = tk.Tk()
 canvas = tk.Canvas(root, width=1500, height=1500, highlightthickness=0)
 canvas.pack()
-root.bind('<Escape>', lambda event: events.menu(event, root))
+root.bind('<Escape>', lambda event: menus.settings(event, root))
 root.resizable(False, False)
 root.iconbitmap('app.ico')
 t2 = threading.Thread(target=maineventhandler)
