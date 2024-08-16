@@ -6,8 +6,14 @@ import json
 import traceback
 def pos(volume,eventname="",eventdict={},cpos=[0,0]):
     if f"#{eventname}" in eventdict:
-        cpos[1]+=eventdict[f"#{eventname}"]["ypos"]
-        cpos[0]+=eventdict[f"#{eventname}"]["xpos"]
+        try:
+            cpos[1]+=eventdict[f"#{eventname}"]["ypos"]+eventdict[f"{eventname}"]["pos"]["y"]
+            cpos[0]+=eventdict[f"#{eventname}"]["xpos"]+eventdict[f"{eventname}"]["pos"]["x"]
+        except Exception as e:
+            traceback.print_exc()
+            cpos[1]+=eventdict[f"#{eventname}"]["ypos"]
+            cpos[0]+=eventdict[f"#{eventname}"]["xpos"]
+        print(cpos)
     return [-cpos[0],-cpos[1]]
 def event(eventname,eventdict,volume,imgc,charbase,ldif=100):
     try:
@@ -52,21 +58,30 @@ def runevents(eventlist,eventdict,charbase,volume):
     for num, event in enumerate(eventlist):
         if "#" in event or not "pos" in eventdict[event]:
             continue
-        add=1
-        sub=1
+        add=3
+        sub=3
         if "add" in eventdict[event]["pos"]:
             add=eventdict[event]["pos"]["add"]
         if "sub" in eventdict[event]["pos"]:
             sub=eventdict[event]["pos"]["sub"]
         try:
-            if eventdict[event]["pos"]["type"]=="up":
+            if eventdict[event]["pos"]["type"]=="setpos.up":
                 if volume>eventdict[event]["pos"]["loudness"] and eventdict[f"#{event}"]["ypos"]<=eventdict[event]["pos"]["max"]-1:
                     eventdict[f"#{event}"]["ypos"]+=add
                 elif volume<eventdict[event]["pos"]["loudness"] and not eventdict[f"#{event}"]["ypos"]<=0:
                     eventdict[f"#{event}"]["ypos"]-=sub
             if eventdict[f"#{event}"]["ypos"]>eventdict[event]["pos"]["max"]:
                 eventdict[f"#{event}"]["ypos"]=eventdict[event]["pos"]["max"]
-        except:
+            if eventdict[event]["pos"]["type"]=="loudness.up":
+                if volume>eventdict[event]["pos"]["loudness"] and eventdict[f"#{event}"]["ypos"]<=eventdict[event]["pos"]["max"]-1:
+                    eventdict[f"#{event}"]["ypos"]+=(volume-eventdict[event]["pos"]["loudness"])/100
+                elif volume<eventdict[event]["pos"]["loudness"] and not eventdict[f"#{event}"]["ypos"]<=0:
+                    eventdict[f"#{event}"]["ypos"]-=sub//2
+            if eventdict[f"#{event}"]["ypos"]>eventdict[event]["pos"]["max"]:
+                eventdict[f"#{event}"]["ypos"]=eventdict[event]["pos"]["max"]
+            if eventdict[f"#{event}"]["ypos"]<0:
+                eventdict[f"#{event}"]["ypos"]=0
+        except Exception as e:
             eventdict[f"#{event}"]={}
             eventdict[f"#{event}"]["ypos"]=0
             eventdict[f"#{event}"]["xpos"]=0
