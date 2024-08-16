@@ -2,9 +2,10 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QCombo
 from PyQt5.QtCore import QEventLoop
 from PyQt5.QtGui import QIcon
 import sys
+import windowsettings
 import os
 import json
-def settings(ev="", root="", qtv=False):
+def settings(ev="", root="", qtv=False, darkmode=False):
     global close
     end=False
     close = False
@@ -23,6 +24,8 @@ def settings(ev="", root="", qtv=False):
     new_window.setWindowTitle("settings")
     new_window.setGeometry(300, 200, 300, 200 if not qtv else 250)
     new_window.setFixedSize(new_window.size())
+    windowsettings.darkmode(new_window,darkmode)
+    windowsettings.nofullscreen(new_window)
 
     number_label = QLabel("Loudness Increment:")
     number_entry = QLineEdit()
@@ -78,3 +81,18 @@ def settings(ev="", root="", qtv=False):
         new_window.destroyed.connect(loop.quit)
         loop.exec_()
     return close
+def charerror(darkmode=False):
+    app = QApplication.instance()
+
+    new_window = QMainWindow()
+    new_window.setWindowIcon(QIcon('app.ico'))
+    new_window.setWindowTitle("char error")
+    new_window.setGeometry(0, 0, 700, 400)
+    new_window.setFixedSize(new_window.size())
+    windowsettings.darkmode(new_window, darkmode)
+    windowsettings.nofullscreen(new_window)
+    new_window.show()
+
+    loop = QEventLoop()
+    new_window.destroyed.connect(loop.quit)
+    loop.exec_()

@@ -3,8 +3,9 @@ import sys
 import json
 from time import sleep
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView
-from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QPixmap, QIcon, QPalette, QColor
 from PyQt5.QtCore import QTimer, Qt
+import windowsettings
 import events
 import menus
 import loudness
@@ -12,6 +13,8 @@ import traceback
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
+global darkmode
+darkmode=True
 try:
     open("settings.json").close()
 except:
@@ -21,7 +24,11 @@ def keyp(event):
     global close
     global window
     if event.key() == Qt.Key_Escape:
-        close=menus.settings("","", qtv=True)
+        close=menus.settings("","", qtv=True, darkmode=darkmode)
+    if event.key() == Qt.Key_F3:
+        print("ok")
+        menus.charerror(darkmode=darkmode)
+        
 def maineventhandler():
     global eventlist, eventdict, charbase, volume, close
     eventlist = []
@@ -168,6 +175,8 @@ window.setAttribute(Qt.WA_NoSystemBackground, True)
 window.keyPressEvent = keyp
 window.setCentralWidget(view)
 window.setWindowIcon(QIcon('app.ico'))
+windowsettings.darkmode(window,darkmode)
+windowsettings.nofullscreen(window)
 window.setFixedSize(400,400)
 update_image()
 window.show()
