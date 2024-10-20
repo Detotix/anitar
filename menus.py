@@ -55,6 +55,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
         global close
         close = True
         end=True
+        sys.exit()
         new_window.hide()
 
     def close_root():
