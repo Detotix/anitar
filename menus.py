@@ -5,6 +5,22 @@ import sys
 import windowsettings
 import os
 import json
+def presettings(darkmode=False):
+    app = QApplication.instance()
+
+    new_window = QMainWindow()
+    new_window.setWindowIcon(QIcon('app.ico'))
+    new_window.setWindowTitle("settings")
+    new_window.setGeometry(300, 200, 300, 200)
+    new_window.setFixedSize(new_window.size())
+    windowsettings.darkmode(new_window, darkmode)
+    windowsettings.nofullscreen(new_window)
+
+    new_window.show()
+
+    loop = QEventLoop()
+    new_window.destroyed.connect(loop.quit)
+    loop.exec_()
 def settings(ev="", root="", qtv=False, darkmode=False):
     global close
     end=False
@@ -81,16 +97,21 @@ def settings(ev="", root="", qtv=False, darkmode=False):
         new_window.destroyed.connect(loop.quit)
         loop.exec_()
     return close
-def charerror(darkmode=False):
+def charerror(knownerrors,darkmode=False):
     app = QApplication.instance()
 
     new_window = QMainWindow()
     new_window.setWindowIcon(QIcon('app.ico'))
-    new_window.setWindowTitle("char error")
+    new_window.setWindowTitle("char error menu")
     new_window.setGeometry(0, 0, 700, 400)
     new_window.setFixedSize(new_window.size())
     windowsettings.darkmode(new_window, darkmode)
     windowsettings.nofullscreen(new_window)
+    for i, error in enumerate(knownerrors):
+        label = QLabel(error, new_window)
+        label.move(5,i*21)
+        label.setStyleSheet("color: red;")
+
     new_window.show()
 
     loop = QEventLoop()

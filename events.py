@@ -13,7 +13,6 @@ def pos(volume,eventname="",eventdict={},cpos=[0,0]):
             traceback.print_exc()
             cpos[1]+=eventdict[f"#{eventname}"]["ypos"]
             cpos[0]+=eventdict[f"#{eventname}"]["xpos"]
-        print(cpos)
     return [-cpos[0],-cpos[1]]
 def event(eventname,eventdict,volume,imgc,charbase,ldif=100):
     try:

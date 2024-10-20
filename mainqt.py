@@ -9,12 +9,11 @@ import windowsettings
 import events
 import menus
 import loudness
+import platform
 import traceback
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
-global darkmode
-darkmode=True
 try:
     open("settings.json").close()
 except:
@@ -26,8 +25,7 @@ def keyp(event):
     if event.key() == Qt.Key_Escape:
         close=menus.settings("","", qtv=True, darkmode=darkmode)
     if event.key() == Qt.Key_F3:
-        print("ok")
-        menus.charerror(darkmode=darkmode)
+        menus.charerror(charerrors, darkmode=darkmode)
         
 def maineventhandler():
     global eventlist, eventdict, charbase, volume, close
@@ -45,11 +43,16 @@ def maineventhandler():
         except Exception as e:
             pass
 
-global eventdict, eventlist, charbase, lastselection, volume
+global eventdict, eventlist, charbase, lastselection, volume,charerrors
+charerrors=["none","none2","none3"]
 eventlist = []
 eventdict = {}
 lastselection = ""
-
+global darkmode
+if platform.system().lower()=="windows" or platform.system().lower()=="linux" and json.loads(open("settings.json").read())["transparent"]:
+    darkmode=True
+else:
+    darkmode=False
 def update_image():
     global eventdict, eventlist, volume, lastselection, charbase, close
     try:
@@ -150,8 +153,6 @@ def update_image():
             img = img[0]
             scene.addPixmap(img).setPos(x, y)
     except Exception as e:
-        #print(e, "this is an error")
-        #traceback.print_exc()
         pass
     QTimer.singleShot(50, update_image)
 global window
