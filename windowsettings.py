@@ -25,9 +25,14 @@ def darkmode(window, darkmode=False):
             }
         """)
         if platform.system().lower()=="windows":
+            print(platform.system().lower())
+            print(int(platform.version().split(".")[2]))
             hwnd = int(window.winId())
-            color = ctypes.c_int(0x000001)
-            ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 19, ctypes.byref(color), ctypes.sizeof(color))
+            if int(platform.version().split(".")[2])>22000:
+                color = ctypes.c_int(0x000001)
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 19, ctypes.byref(color), ctypes.sizeof(color))
+            else:
+                immersivedarkmode(window)
 def immersivedarkmode(window):
     if platform.system().lower()=="windows":
         hwnd = int(window.winId())

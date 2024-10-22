@@ -103,15 +103,20 @@ def charerror(knownerrors,darkmode=False):
 
     new_window = QMainWindow()
     new_window.setWindowIcon(QIcon('app.ico'))
-    new_window.setWindowTitle("char error menu")
+    new_window.setWindowTitle("Char error menu - pre (unfinished)")
     new_window.setGeometry(0, 0, 700, 400)
     new_window.setFixedSize(new_window.size())
     windowsettings.darkmode(new_window, darkmode)
     windowsettings.nofullscreen(new_window)
     for i, error in enumerate(knownerrors):
-        label = QLabel(error, new_window)
-        label.move(5,i*21)
-        label.setStyleSheet("color: red;")
+        identifyer = QLabel("{0}".format(error["type"]), new_window)
+        identifyer.move(30,i*21)
+        errormessage = QLabel("---  {0}".format(error["message"]), new_window)
+        errormessage.move(60,i*21)
+        errormessage.setMinimumSize(600, 5)
+        etype=error["type"].replace("warn", "#FFDE59").replace("error", "#EE4345").replace("info", "#98F5F9")
+        identifyer.setStyleSheet(f"color: {etype};")
+        errormessage.setStyleSheet(f"color: {etype};")
 
     new_window.show()
 

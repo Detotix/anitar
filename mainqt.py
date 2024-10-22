@@ -44,7 +44,7 @@ def maineventhandler():
             pass
 
 global eventdict, eventlist, charbase, lastselection, volume,charerrors
-charerrors=["none","none2","none3"]
+charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
 eventlist = []
 eventdict = {}
 lastselection = ""
