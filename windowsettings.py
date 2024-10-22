@@ -43,7 +43,7 @@ def nofullscreen(window):
         WS_MAXIMIZEBOX = 0x00010000
         style = ctypes.windll.user32.GetWindowLongW(hwnd, GWL_STYLE)
         style &= ~WS_MAXIMIZEBOX
-        if int(platform.version().split(".")[2])>42000:
+        if int(platform.version().split(".")[2])>22000:
                 ctypes.windll.user32.SetWindowLongW(hwnd, GWL_STYLE, style)
         else:
             immersivedarkmode(window)
