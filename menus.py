@@ -69,6 +69,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
         if not loudness_increment:
             loudness_increment = str(add)
         save = {"select": selected_character, "addition": int(loudness_increment)}
+        save=save | json.loads(open("settings.json", "r").read())
         with open("settings.json", "w") as a:
             a.write(json.dumps(save, indent=4, sort_keys=True))
         new_window.close()
