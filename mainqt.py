@@ -44,6 +44,7 @@ def maineventhandler():
     eventlist = []
     eventdict = {}
     charbase = {}
+    lastmousepos=-1
     while True:
         ee = True
         sleep(0.02)
@@ -67,6 +68,17 @@ else:
     darkmode=False
 def update_image():
     global eventdict, eventlist, volume, lastselection, charbase, close,charerrors
+    if QApplication.instance().mouseButtons() & Qt.LeftButton and json.loads(open("settings.json").read())["transparent"]:
+            try:
+                wpos=window.cursor().pos()
+                window.move(wpos.x(),wpos.y())
+            except:
+                traceback.print_exc()
+                wpos=""
+                b=[]
+                winmove=False
+    else:
+        winmove=False
     try:
         if close:
             sys.exit()

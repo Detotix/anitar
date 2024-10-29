@@ -1,5 +1,6 @@
 chars/**
 extensions/**
+workingdir/**
 !chars/beispielchar1/**
 !chars/beispielchar1
 .vscode/
