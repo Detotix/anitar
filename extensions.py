@@ -7,7 +7,8 @@ def loadextensions():
             spec = importlib.util.spec_from_file_location(obj, f"extensions/{obj}/__init__.py")
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
-            module.init()
+            if hasattr(module, "init"):
+                module.init()
     else:
         os.mkdir("extensions")
         extensionlist=[]

@@ -12,6 +12,7 @@ import loudness
 import platform
 import extensions
 import traceback
+import os
 
 # extensions
 global current_extensions
@@ -21,6 +22,10 @@ current_extensions = extensions.loadextensions()
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
+
+if not os.path.exists("workingdir"):
+    os.mkdir("workingdir")
+
 try:
     open("settings.json").close()
 except:
