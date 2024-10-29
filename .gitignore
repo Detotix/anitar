@@ -1,4 +1,5 @@
 chars/**
+extensions/**
 !chars/beispielchar1/**
 !chars/beispielchar1
 .vscode/

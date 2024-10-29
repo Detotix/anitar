@@ -10,7 +10,14 @@ import events
 import menus
 import loudness
 import platform
+import extensions
 import traceback
+
+# extensions
+global current_extensions
+current_extensions = extensions.loadextensions()
+# extensions END
+
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
@@ -28,7 +35,7 @@ def keyp(event):
         menus.charerror(charerrors, darkmode=darkmode)
         
 def maineventhandler():
-    global eventlist, eventdict, charbase, volume, close
+    global eventlist, eventdict, charbase, volume, close,charerrors
     eventlist = []
     eventdict = {}
     charbase = {}
@@ -43,7 +50,7 @@ def maineventhandler():
         except Exception as e:
             pass
 
-global eventdict, eventlist, charbase, lastselection, volume,charerrors
+global eventdict, eventlist, charbase, lastselection, volume, charerrors
 charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
 eventlist = []
 eventdict = {}
@@ -54,7 +61,7 @@ if platform.system().lower()=="windows" or platform.system().lower()=="linux" an
 else:
     darkmode=False
 def update_image():
-    global eventdict, eventlist, volume, lastselection, charbase, close
+    global eventdict, eventlist, volume, lastselection, charbase, close,charerrors
     try:
         if close:
             sys.exit()
@@ -92,7 +99,6 @@ def update_image():
         except:
             settings["addition"]=120
             settings["select"]="beispielchar1"
-            print(settings)
             open("settings.json", "w").write(json.dumps(settings,indent=4))
             charbase = json.loads(open(f"chars/beispielchar1/charbase.json", "r").read())
     seimages = []
@@ -110,8 +116,7 @@ def update_image():
             except:
                 layer["loudnessdifference"] = 0
             if layer["event"] in eventlist:
-                do, xy = events.event(layer["event"], eventdict, volume, len(layer["imagefiles"]), charbase,
-                                      layer["loudnessdifference"])
+                do, xy = events.event(layer["event"], eventdict, volume, len(layer["imagefiles"]), charbase, current_extensions, layer["loudnessdifference"])
                 if do.split(":")[0] == "display":
                     imgfile = layer["imagefiles"][int(do.split(":")[1])]
                     if imgfile != "nothing":
@@ -126,8 +131,7 @@ def update_image():
                 eventlist.append(layer["event"])
                 eventdict[layer["event"]] = charbase["events"][layer["event"]]
                 if layer["event"] in eventlist:
-                    do, xy = events.event(layer["event"], eventdict, volume, len(layer["imagefiles"]), charbase,
-                                          layer["loudnessdifference"])
+                    do, xy = events.event(layer["event"], eventdict, volume, len(layer["imagefiles"]), charbase, current_extensions, layer["loudnessdifference"])
                     try:
                         if do.split(":")[0] == "display":
                             imgfile = layer["imagefiles"][int(do.split(":")[1])]

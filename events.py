@@ -4,6 +4,8 @@ import sys
 import os
 import json
 import traceback
+import extensions
+global charerrors
 def pos(volume,eventname="",eventdict={},cpos=[0,0]):
     if f"#{eventname}" in eventdict:
         try:
@@ -14,7 +16,8 @@ def pos(volume,eventname="",eventdict={},cpos=[0,0]):
             cpos[1]+=eventdict[f"#{eventname}"]["ypos"]
             cpos[0]+=eventdict[f"#{eventname}"]["xpos"]
     return [-cpos[0],-cpos[1]]
-def event(eventname,eventdict,volume,imgc,charbase,ldif=100):
+def event(eventname,eventdict,volume,imgc,charbase,exts,ldif=100):
+    global charerrors
     try:
         posv=pos(volume,eventname,eventdict,charbase["events"][eventname]["pos"]["pos"])
     except:
@@ -29,6 +32,15 @@ def event(eventname,eventdict,volume,imgc,charbase,ldif=100):
                     return f"display:{imgc-1-num}", posv
     except:
         return "display:0", posv
+    try:
+        if eventdict[eventname]["type"].split(".")[0] in exts:
+            out="display:"+str(extensions.display_event(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1],eventdict,volume))
+            #if out=="display:None":
+            #    if not {"message":"recieved none from extension '{0}' function '{1}'".format(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1]),"type":"warn"} in charerrors:
+            #        charerrors.append({"message":"recieved none from extension '{0}' function '{1}'".format(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1]),"type":"warn"})
+            return out, posv
+    except Exception as e:
+        traceback.print_exc()
     try:
         if eventdict[eventname]["type"]=="ticker":
             if eventdict[eventname]["time"]<=eventdict[eventname]["timeticked"]:
