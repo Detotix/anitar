@@ -77,7 +77,7 @@ else:
 def update_image():
     global eventdict, eventlist, volume, lastselection, charbase, close,charerrors
     #this is for moving the window during transparent mode
-    try:
+    if "transparent" in json.loads(open("settings.json").read()):
         if QApplication.instance().mouseButtons() & Qt.LeftButton and json.loads(open("settings.json").read())["transparent"]:
                 try:
                     wpos=window.cursor().pos()
@@ -88,8 +88,6 @@ def update_image():
                     winmove=False
         else:
             winmove=False
-    except:
-        pass
     
 
     try:
