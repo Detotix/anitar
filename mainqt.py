@@ -17,18 +17,19 @@ import os
 
 #TODO create some comments for everything
 
+#creates a working dir
+if not os.path.exists("workingdir"):
+    os.mkdir("workingdir")
+
 # extensions
 global current_extensions
 current_extensions = extensions.loadextensions()
 # extensions END
 
+#class of shared vars
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
-#creates a working dir (currently unused but will get a use IF i dont scrap the idea)
-if not os.path.exists("workingdir"):
-    os.mkdir("workingdir")
-
 #creates settings.json if it dosnt exist
 if not os.path.exists("settings.json"):
     with open("settings.json", "w") as createsettings:
@@ -43,11 +44,11 @@ def keyp(event):
         close=menus.settings("","", qtv=True, darkmode=darkmode)
     #opens the charerror menu if F3 key is pressed
     if event.key() == Qt.Key_F3:
-        menus.charerror(charerrors, darkmode=darkmode)
+        menus.charerror(events.shared.charerrors, darkmode=darkmode)
 
 #event update
 def maineventhandler():
-    global eventlist, eventdict, charbase, volume, close,charerrors
+    global eventlist, eventdict, charbase, volume, close
     eventlist = []
     eventdict = {}
     charbase = {}
@@ -63,8 +64,7 @@ def maineventhandler():
         except Exception as e:
             pass
 
-global eventdict, eventlist, charbase, lastselection, volume, charerrors
-charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
+global eventdict, eventlist, charbase, lastselection, volume
 eventlist = []
 eventdict = {}
 lastselection = ""
@@ -75,7 +75,7 @@ if platform.system().lower()=="windows" or platform.system().lower()=="linux" an
 else:
     darkmode=False
 def update_image():
-    global eventdict, eventlist, volume, lastselection, charbase, close,charerrors
+    global eventdict, eventlist, volume, lastselection, charbase, close
     #this is for moving the window during transparent mode
     if "transparent" in json.loads(open("settings.json").read()):
         if QApplication.instance().mouseButtons() & Qt.LeftButton and json.loads(open("settings.json").read())["transparent"]:
@@ -197,6 +197,8 @@ scene = QGraphicsScene()
 view = QGraphicsView(scene)
 view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+#enables transparent mode
 try:
     if json.loads(open("settings.json").read())["transparent"]:
         view.setStyleSheet("background: transparent; border: none;")

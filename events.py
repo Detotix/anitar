@@ -5,6 +5,8 @@ import os
 import json
 import traceback
 import extensions
+class shared:
+    charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
 #TODO create some comments for everything
 def pos(volume,eventname="",eventdict={},cpos=[0,0]):
     if f"#{eventname}" in eventdict:
@@ -35,9 +37,9 @@ def event(eventname,eventdict,volume,imgc,charbase,exts,ldif=100):
     try:
         if eventdict[eventname]["type"].split(".")[0] in exts:
             out="display:"+str(extensions.display_event(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1],eventdict,volume))
-            #if out=="display:None":
-            #    if not {"message":"recieved none from extension '{0}' function '{1}'".format(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1]),"type":"warn"} in charerrors:
-            #        charerrors.append({"message":"recieved none from extension '{0}' function '{1}'".format(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1]),"type":"warn"})
+            if out=="display:None":
+                if not {"message":"recieved None from extension '{0}' function '{1}'".format(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1]),"type":"warn"} in shared.charerrors:
+                    shared.charerrors.append({"message":"recieved none from extension '{0}' function '{1}'".format(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1]),"type":"warn"})
             return out, posv
     except Exception as e:
         traceback.print_exc()

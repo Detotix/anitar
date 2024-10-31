@@ -3,12 +3,17 @@ import os
 import sys
 import ctypes
 
+class extension_tools:
+    def test():
+        print("seems to work")
 #loads all extensions
 def loadextensions():
     if os.path.exists("extensions"):
         #takes the extensions folder as the extension list
         extensionlist=os.listdir("extensions")
         for num,obj in enumerate(extensionlist):
+            if not os.path.exists(f"workingdir/{obj}"):
+                os.mkdir(f"workingdir/{obj}")
             #checks if akll necessary files exist
             if not os.path.exists(f"extensions/{obj}/extension.json") or not os.path.exists(f"extensions/{obj}/__init__.py"):
                 
@@ -43,4 +48,8 @@ def display_event(ext,event,eventdict,volume):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     func = getattr(module,event)
-    return func(eventdict,volume)
+    olddir=os.getcwd()
+    os.chdir(f"workingdir/{ext}")
+    returnvalue=func(eventdict,volume)
+    os.chdir(olddir)
+    return returnvalue
