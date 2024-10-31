@@ -5,7 +5,7 @@ import os
 import json
 import traceback
 import extensions
-global charerrors
+#TODO create some comments for everything
 def pos(volume,eventname="",eventdict={},cpos=[0,0]):
     if f"#{eventname}" in eventdict:
         try:

@@ -5,6 +5,9 @@ import sys
 import windowsettings
 import os
 import json
+
+#TODO create some comments for everything
+
 def presettings(darkmode=False):
     app = QApplication.instance()
 

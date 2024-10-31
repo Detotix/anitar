@@ -14,6 +14,9 @@ import extensions
 import traceback
 import os
 
+
+#TODO create some comments for everything
+
 # extensions
 global current_extensions
 current_extensions = extensions.loadextensions()
@@ -22,23 +25,27 @@ current_extensions = extensions.loadextensions()
 t1 = threading.Thread(target=loudness.getloudness)
 t1.daemon = True
 t1.start()
-
+#creates a working dir (currently unused but will get a use IF i dont scrap the idea)
 if not os.path.exists("workingdir"):
     os.mkdir("workingdir")
 
-try:
-    open("settings.json").close()
-except:
+#creates settings.json if it dosnt exist
+if not os.path.exists("settings.json"):
     with open("settings.json", "w") as createsettings:
         createsettings.write('{\n"addition": 120,\n"select": "none"\n}')
+
+#function for keyinputs
 def keyp(event):
     global close
     global window
+    #opens escape menu if the escape key is pressed
     if event.key() == Qt.Key_Escape:
         close=menus.settings("","", qtv=True, darkmode=darkmode)
+    #opens the charerror menu if F3 key is pressed
     if event.key() == Qt.Key_F3:
         menus.charerror(charerrors, darkmode=darkmode)
-        
+
+#event update
 def maineventhandler():
     global eventlist, eventdict, charbase, volume, close,charerrors
     eventlist = []
@@ -62,12 +69,14 @@ eventlist = []
 eventdict = {}
 lastselection = ""
 global darkmode
+#deaktivate darkmode if platform is unknown / unsupported or if transparent mode is enabled
 if platform.system().lower()=="windows" or platform.system().lower()=="linux" and json.loads(open("settings.json").read())["transparent"]:
     darkmode=True
 else:
     darkmode=False
 def update_image():
     global eventdict, eventlist, volume, lastselection, charbase, close,charerrors
+    #this is for moving the window during transparent mode
     if QApplication.instance().mouseButtons() & Qt.LeftButton and json.loads(open("settings.json").read())["transparent"]:
             try:
                 wpos=window.cursor().pos()
@@ -75,10 +84,11 @@ def update_image():
             except:
                 traceback.print_exc()
                 wpos=""
-                b=[]
                 winmove=False
     else:
         winmove=False
+    
+
     try:
         if close:
             sys.exit()
