@@ -2,6 +2,8 @@ import importlib
 import os
 import sys
 import ctypes
+import traceback
+import program
 
 class extension_tools:
     def test():
@@ -50,6 +52,10 @@ def display_event(ext,event,eventdict,volume):
     func = getattr(module,event)
     olddir=os.getcwd()
     os.chdir(f"workingdir/{ext}")
-    returnvalue=func(eventdict,volume)
+    try:
+        returnvalue=func(eventdict,volume)
+    except:
+        program.charerror("error",f"extension {ext} function {event} had an error")
+        program.charerror("error", traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1])[0].strip())
     os.chdir(olddir)
     return returnvalue

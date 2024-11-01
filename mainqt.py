@@ -5,6 +5,7 @@ from time import sleep
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGraphicsScene, QGraphicsView
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QColor
 from PyQt5.QtCore import QTimer, Qt
+import program
 import windowsettings
 import events
 import menus
@@ -44,7 +45,7 @@ def keyp(event):
         close=menus.settings("","", qtv=True, darkmode=darkmode)
     #opens the charerror menu if F3 key is pressed
     if event.key() == Qt.Key_F3:
-        menus.charerror(events.shared.charerrors, darkmode=darkmode)
+        menus.charerror(program.shared.charerrors, darkmode=darkmode)
 
 #event update
 def maineventhandler():
