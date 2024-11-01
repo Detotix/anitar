@@ -28,7 +28,11 @@ def darkmode(window, darkmode=False):
             print(platform.system().lower())
             hwnd = int(window.winId())
             color = ctypes.c_int(0x000001)
-            ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 19, ctypes.byref(color), ctypes.sizeof(color))
+            if int(platform.version().split(".")[2])<22000:
+                print("ok")
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 20, ctypes.byref(color), ctypes.sizeof(color))
+            else:
+                ctypes.windll.dwmapi.DwmSetWindowAttribute(hwnd, 19, ctypes.byref(color), ctypes.sizeof(color))
             print(int(platform.version().split(".")[2]))
 def immersivedarkmode(window):
     if platform.system().lower()=="windows":
@@ -43,7 +47,3 @@ def nofullscreen(window):
         WS_MAXIMIZEBOX = 0x00010000
         style = ctypes.windll.user32.GetWindowLongW(hwnd, GWL_STYLE)
         style &= ~WS_MAXIMIZEBOX
-        if int(platform.version().split(".")[2])>22000:
-                ctypes.windll.user32.SetWindowLongW(hwnd, GWL_STYLE, style)
-        else:
-            immersivedarkmode(window)
