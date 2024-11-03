@@ -116,8 +116,15 @@ def update_image():
         pass
     try:
         size=charbase["size"].split("x")
-        window.setFixedSize(int(size[0]),int(size[1]))
+        #creates error if char size is below minimum or above maximum 
+        if int(size[0])<300 or int(size[1])<300 or int(size[0])>900 or int(size[1])>900:
+            program.charerror("error", "char size to small (cant be less then 300x300 or above 900x900)")
+            raise "error"
+        else:
+            #sets window size to desired value if it is above 300x300 and below 900x900
+            window.setFixedSize(int(size[0]),int(size[1]))
     except:
+        #sets the window size to 400x400 if nothing is set or something bad happened
         window.setFixedSize(400,400)
     try:
         charbase = json.loads(open(f"chars/{selection}/charbase.json", "r").read())
