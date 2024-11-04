@@ -78,8 +78,28 @@ else:
 def update_image():
     global eventdict, eventlist, volume, lastselection, charbase, close
     #this is for moving the window during transparent mode
-    if "transparent" in json.loads(open("settings.json").read()):
-        if QApplication.instance().mouseButtons() & Qt.LeftButton and json.loads(open("settings.json").read())["transparent"]:
+    if program.shared.reload_settings:
+        print("reloading")
+        program.shared.reload_settings=False
+        program.shared.settings = json.loads(open("settings.json", "r").read())
+        program.shared.selection = str(program.shared.settings["select"])
+        if program.shared.reload_char:
+            program.shared.reload_char=False
+            eventlist = []
+            eventdict = {}
+            try:
+                charbase = json.loads(open(f"chars/{program.shared.selection}/charbase.json", "r").read())
+            except FileNotFoundError:
+                try:
+                    events.backwardscompatibility(program.shared.selection)
+                    charbase = json.loads(open(f"chars/{program.shared.selection}/charbase.json", "r").read())
+                except:
+                    program.shared.settings["addition"]=120
+                    program.shared.settings["select"]="beispielchar1"
+                    open("settings.json", "w").write(json.dumps(program.shared.settings,indent=4))
+                    charbase = json.loads(open(f"chars/beispielchar1/charbase.json", "r").read())
+    if "transparent" in program.shared.settings:
+        if QApplication.instance().mouseButtons() & Qt.LeftButton and program.shared.settings["transparent"]:
                 try:
                     wpos=window.cursor().pos()
                     window.move(wpos.x(),wpos.y())
@@ -102,13 +122,7 @@ def update_image():
         pass
     scene.clear()
     imgs = []
-    settings = json.loads(open("settings.json", "r").read())
-    selection = str(settings["select"])
-    if lastselection != selection:
-        lastselection = selection
-        eventlist = []
-        eventdict = {}
-    window.setWindowTitle("anitar 4 character " + selection)
+    window.setWindowTitle("anitar 4 character " + program.shared.selection)
     try:
         backgroundcolor=charbase["backcolor"]
         window.setStyleSheet(f"background-color: {backgroundcolor};")
@@ -118,7 +132,7 @@ def update_image():
         size=charbase["size"].split("x")
         #creates error if char size is below minimum or above maximum 
         if int(size[0])<300 or int(size[1])<300 or int(size[0])>900 or int(size[1])>900:
-            program.charerror("error", "char size to small (cant be less then 300x300 or above 900x900)")
+            program.char.charerror("error", "char size to small (cant be less then 300x300 or above 900x900)")
             raise "error"
         else:
             #sets window size to desired value if it is above 300x300 and below 900x900
@@ -126,17 +140,6 @@ def update_image():
     except:
         #sets the window size to 400x400 if nothing is set or something bad happened
         window.setFixedSize(400,400)
-    try:
-        charbase = json.loads(open(f"chars/{selection}/charbase.json", "r").read())
-    except FileNotFoundError:
-        try:
-            events.backwardscompatibility(selection)
-            charbase = json.loads(open(f"chars/{selection}/charbase.json", "r").read())
-        except:
-            settings["addition"]=120
-            settings["select"]="beispielchar1"
-            open("settings.json", "w").write(json.dumps(settings,indent=4))
-            charbase = json.loads(open(f"chars/beispielchar1/charbase.json", "r").read())
     seimages = []
     if "events" not in charbase or "audio" not in charbase["events"]:
         try:
@@ -145,7 +148,7 @@ def update_image():
             charbase["events"] = {}
             charbase["events"]["audio"] = {"type": "audio"}
     try:
-        volume=max(0,loudness.volume+settings["addition"])
+        volume=max(0,loudness.volume+program.shared.settings["addition"])
         for i, layer in enumerate(charbase["layers"]):
             try:
                 layer["loudnessdifference"]
@@ -156,7 +159,7 @@ def update_image():
                 if do.split(":")[0] == "display":
                     imgfile = layer["imagefiles"][int(do.split(":")[1])]
                     if imgfile != "nothing":
-                        img_path = f'chars/{settings["select"]}/{imgfile}'
+                        img_path = f'chars/{program.shared.settings["select"]}/{imgfile}'
                         img = QPixmap(img_path)
                         imgs.append([img, xy])
                     try:
@@ -172,7 +175,7 @@ def update_image():
                         if do.split(":")[0] == "display":
                             imgfile = layer["imagefiles"][int(do.split(":")[1])]
                             if imgfile != "nothing":
-                                img_path = f'chars/{settings["select"]}/{imgfile}'
+                                img_path = f'chars/{program.shared.settings["select"]}/{imgfile}'
                                 img = QPixmap(img_path)
                                 imgs.append([img, xy])
                             try:
@@ -183,7 +186,7 @@ def update_image():
                         do = "display:0"
                         if do.split(":")[0] == "display":
                             imgfile = layer["imagefiles"][int(do.split(":")[1])]
-                            img_path = f'chars/{settings["select"]}/{imgfile}'
+                            img_path = f'chars/{program.shared.settings["select"]}/{imgfile}'
                             img = QPixmap(img_path)
                             imgs.append([img, xy])
                             try:
@@ -196,7 +199,7 @@ def update_image():
             img = img[0]
             scene.addPixmap(img).setPos(x, y)
     except Exception as e:
-        pass
+        program.char.reload_char()
     QTimer.singleShot(50, update_image)
 global window
 app = QApplication(sys.argv)

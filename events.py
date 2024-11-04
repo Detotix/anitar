@@ -18,7 +18,6 @@ def pos(volume,eventname="",eventdict={},cpos=[0,0]):
             cpos[0]+=eventdict[f"#{eventname}"]["xpos"]
     return [-cpos[0],-cpos[1]]
 def event(eventname,eventdict,volume,imgc,charbase,exts,ldif=100):
-    global charerrors
     try:
         posv=pos(volume,eventname,eventdict,charbase["events"][eventname]["pos"]["pos"])
     except:
@@ -37,7 +36,7 @@ def event(eventname,eventdict,volume,imgc,charbase,exts,ldif=100):
         if eventdict[eventname]["type"].split(".")[0] in exts:
             out="display:"+str(extensions.display_event(eventdict[eventname]["type"].split(".")[0],eventdict[eventname]["type"].split(".")[1],eventdict,volume))
             if out=="display:None":
-                program.charerror("warn","recieved None from extension '{0}' function '{1}'".format(eventdict[eventname]["type"].split(".")[0]))
+                program.char.charerror("warn","recieved None from extension '{0}' function '{1}'".format(eventdict[eventname]["type"].split(".")[0]))
             return out, posv
     except Exception as e:
         pass
@@ -109,7 +108,8 @@ def runevents(eventlist,eventdict,charbase,volume):
                         eventdict[event]["timeticked"]=0.0
                     try:
                         if eventdict[event]["timeslept"]>=eventdict[event]["sleep"]:
-                            
+                            eventdict[event]["timeticked"]=0.0
+                            eventdict[event]["timeslept"]=0.0
                             del eventdict[event]
                             del eventlist[num-1]
                         else:

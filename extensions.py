@@ -59,8 +59,8 @@ def display_event(ext,event,eventdict,volume):
     except:
         #if the function of the display event had an error
         #the message gets added to the char error screen
-        program.charerror("error",f"extension {ext} function {event} had an error")
-        program.charerror("error", traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1])[0].strip())
+        program.char.charerror("error",f"extension {ext} function {event} had an error")
+        program.char.charerror("error", traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1])[0].strip())
     #sets the working dir to the main dir
     os.chdir(olddir)
     return returnvalue

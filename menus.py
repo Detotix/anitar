@@ -5,7 +5,7 @@ import sys
 import windowsettings
 import os
 import json
-
+import program
 #TODO create some comments for everything
 
 def presettings(darkmode=False):
@@ -75,6 +75,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
         save=json.loads(open("settings.json", "r").read()) | save
         with open("settings.json", "w") as a:
             a.write(json.dumps(save, indent=4, sort_keys=True))
+        program.char.reload_char()
         new_window.close()
 
     save_button = QPushButton("Save")
