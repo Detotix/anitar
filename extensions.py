@@ -3,7 +3,8 @@ import os
 import sys
 import traceback
 import program
-
+class extensions:
+    extensions={}
 class extension_tools:
     def test():
         print("seems to work")
@@ -27,6 +28,8 @@ def loadextensions():
 
                 #removes extension out of the list that the program wont use it
                 extensionlist.remove(obj)
+            else:
+                extensions.extensions[obj]={"status":"working"}
             try:
                 #loads the extension and calles the init function if it exists
                 spec = importlib.util.spec_from_file_location(obj, f"extensions/{obj}/__init__.py")
@@ -61,6 +64,7 @@ def display_event(ext,event,eventdict,volume):
         #the message gets added to the char error screen
         program.char.charerror("error",f"extension {ext} function {event} had an error eventtype:display_event")
         program.char.charerror("error", traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1])[0].strip())
+        extensions.extensions[ext]["status"]="error"
     #sets the working dir to the main dir
     os.chdir(olddir)
     return returnvalue
@@ -81,6 +85,7 @@ def extension_event(ext,event):
         #the message gets added to the char error screen
         program.char.charerror("error",f"extension {ext} function {event} had an error eventtype:extension_event")
         program.char.charerror("error", traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1])[0].strip())
+        extensions.extensions[ext]["status"]="error"
     os.chdir(olddir)
     #sets the working dir to the main dir
 def getextension_event(ext,event):

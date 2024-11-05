@@ -130,7 +130,10 @@ def charerror(knownerrors,darkmode=False):
             button = QPushButton("{0}".format(error_type), new_window)
             button.setMaximumSize(50,15)
             try:
-                button.clicked.connect(lambda: extensions.extension_event(error["event"].split(".")[0],error["event"].split(".")[1]))
+                if extensions.extensions.extensions[error["event"].split(".")[0]]["status"]=="working":
+                    button.clicked.connect(lambda: extensions.extension_event(error["event"].split(".")[0],error["event"].split(".")[1]))
+                else:
+                    program.char.charerror("warn", "cant do buttons anymore extension {0} is disabled".format(error["event"].split(".")[0]))
             except:
                 #TODO add error message if event is not set
                 pass
