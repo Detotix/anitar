@@ -49,7 +49,7 @@ def display_event(ext,event,eventdict,volume):
     spec = importlib.util.spec_from_file_location(ext, f"extensions/{ext}/__init__.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    func = getattr(module,event)
+    func = getattr(module.display_event,event)
     #sets working dir to the extension working directory
     olddir=os.getcwd()
     os.chdir(f"workingdir/{ext}")
@@ -59,8 +59,35 @@ def display_event(ext,event,eventdict,volume):
     except:
         #if the function of the display event had an error
         #the message gets added to the char error screen
-        program.char.charerror("error",f"extension {ext} function {event} had an error")
+        program.char.charerror("error",f"extension {ext} function {event} had an error eventtype:display_event")
         program.char.charerror("error", traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1])[0].strip())
     #sets the working dir to the main dir
     os.chdir(olddir)
     return returnvalue
+def extension_event(ext,event):
+    #loads extension
+    spec = importlib.util.spec_from_file_location(ext, f"extensions/{ext}/__init__.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    func = getattr(module.extension_event,event)
+    #sets working dir to the extension working directory
+    olddir=os.getcwd()
+    os.chdir(f"workingdir/{ext}")
+    try:
+        #runs the function
+        func()
+    except:
+        #if the function of the extension event had an error
+        #the message gets added to the char error screen
+        program.char.charerror("error",f"extension {ext} function {event} had an error eventtype:extension_event")
+        program.char.charerror("error", traceback.format_exception_only(sys.exc_info()[0], sys.exc_info()[1])[0].strip())
+    os.chdir(olddir)
+    #sets the working dir to the main dir
+def getextension_event(ext,event):
+    #loads extension
+    spec = importlib.util.spec_from_file_location(ext, f"extensions/{ext}/__init__.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    func = getattr(module.extension_event,event)
+    #sets working dir to the extension working directory
+    return func

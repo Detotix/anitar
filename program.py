@@ -1,5 +1,5 @@
 class shared:
-    charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
+    charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info-button","event":"base.hewwo"}]
     reload_char=True
     reload_settings=True
     settings={}

@@ -6,6 +6,8 @@ import windowsettings
 import os
 import json
 import program
+import traceback
+import extensions
 #TODO create some comments for everything
 
 def presettings(darkmode=False):
@@ -114,11 +116,26 @@ def charerror(knownerrors,darkmode=False):
     windowsettings.darkmode(new_window, darkmode)
     windowsettings.nofullscreen(new_window)
     for i, error in enumerate(knownerrors):
+        button=False
+        if "-button" in error["type"]:
+            add=70
+            button=True
+            error["type"]=error["type"].replace("-button", "")
         identifyer = QLabel("{0}".format(error["type"]), new_window)
-        identifyer.move(30,i*21)
+        identifyer.move(60,i*21)
         errormessage = QLabel("---  {0}".format(error["message"]), new_window)
-        errormessage.move(60,i*21)
+        errormessage.move(90,i*21)
         errormessage.setMinimumSize(600, 5)
+        if button:
+            button = QPushButton("{0}".format(error["type"]), new_window)
+            button.setMaximumSize(50,15)
+            try:
+                button.clicked.connect(lambda: extensions.extension_event(error["event"].split(".")[0],error["event"].split(".")[1]))
+            except:
+                #TODO add error message if event is not set
+                pass
+            button.move(0,8+i*21)
+
         etype=error["type"].replace("warn", "#FFDE59").replace("error", "#EE4345").replace("info", "#98F5F9")
         identifyer.setStyleSheet(f"color: {etype};")
         errormessage.setStyleSheet(f"color: {etype};")
