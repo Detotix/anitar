@@ -58,7 +58,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
     #character selection box
     selected_option = QComboBox()
     selected_option.addItems(options)
-    selected_option.setCurrentIndex(0)
+    selected_option.setCurrentIndex(options.index(program.shared.selection))
     #audio label
     selection_audio_device = QLabel("selected audio device: (work in progress)")
     selection_audio_device.setSizePolicy(selection_audio_device.sizePolicy().Fixed, selection_audio_device.sizePolicy().Fixed)
