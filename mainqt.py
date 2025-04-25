@@ -90,6 +90,7 @@ def update_image():
             program.shared.reload_char=False
             eventlist = []
             eventdict = {}
+            program.shared.charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
             try:
                 charbase = json.loads(open(f"chars/{program.shared.selection}/charbase.json", "r").read())
             except FileNotFoundError:
@@ -97,6 +98,7 @@ def update_image():
                     events.backwardscompatibility(program.shared.selection)
                     charbase = json.loads(open(f"chars/{program.shared.selection}/charbase.json", "r").read())
                 except:
+                    program.char.charerror("error", "there was an error while loading in the character using example character")
                     program.shared.settings["addition"]=120
                     program.shared.settings["select"]="beispielchar1"
                     open("settings.json", "w").write(json.dumps(program.shared.settings,indent=4))
