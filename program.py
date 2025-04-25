@@ -14,3 +14,7 @@ class char:
 class anitar:
     def reload_settings():
            shared.reload_settings=True
+class audio_devices:
+    selected_device = ["default", -1]
+    device_list = ["default"]
+    device_dict = {"default":-1}

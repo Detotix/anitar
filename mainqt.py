@@ -34,7 +34,7 @@ t1.start()
 #creates settings.json if it dosnt exist
 if not os.path.exists("settings.json"):
     with open("settings.json", "w") as createsettings:
-        createsettings.write('{\n"addition": 120,\n"select": "none"\n}')
+        createsettings.write('{\n"addition": 120,\n"select": "none",\n"selected_audio_device":"default"}')
 
 #function for keyinputs
 def keyp(event):
@@ -79,10 +79,13 @@ def update_image():
     global eventdict, eventlist, volume, lastselection, charbase, close
     #this is for moving the window during transparent mode
     if program.shared.reload_settings:
-        print("reloading")
         program.shared.reload_settings=False
         program.shared.settings = json.loads(open("settings.json", "r").read())
         program.shared.selection = str(program.shared.settings["select"])
+        try:
+            program.audio_devices.selected_device=[program.shared.settings["selected_audio_device"], program.audio_devices.device_dict[program.shared.settings["selected_audio_device"]]]
+        except:
+            program.audio_devices.selected_device=["default", 0]
         if program.shared.reload_char:
             program.shared.reload_char=False
             eventlist = []

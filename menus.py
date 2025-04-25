@@ -49,13 +49,25 @@ def settings(ev="", root="", qtv=False, darkmode=False):
     windowsettings.nofullscreen(new_window)
 
     number_label = QLabel("Loudness Increment:")
+    number_label.setSizePolicy(number_label.sizePolicy().Fixed, number_label.sizePolicy().Fixed)
     number_entry = QLineEdit()
     selection_label = QLabel("select char:")
+    selection_label.setSizePolicy(selection_label.sizePolicy().Fixed, selection_label.sizePolicy().Fixed)
+    #getting chars for selection
     options = os.listdir("chars/")
+    #character selection box
     selected_option = QComboBox()
     selected_option.addItems(options)
     selected_option.setCurrentIndex(0)
-
+    #audio label
+    selection_audio_device = QLabel("selected audio device: (work in progress)")
+    selection_audio_device.setSizePolicy(selection_audio_device.sizePolicy().Fixed, selection_audio_device.sizePolicy().Fixed)
+    #audio device selection box
+    audio_device = QComboBox()
+    audio_device.addItems(program.audio_devices.device_list)
+    audio_device.setCurrentIndex(program.audio_devices.device_list.index(program.audio_devices.selected_device[0]))
+    
+    
     def close_p():
         global close
         close = True
@@ -73,7 +85,8 @@ def settings(ev="", root="", qtv=False, darkmode=False):
         selected_character = selected_option.currentText()
         if not loudness_increment:
             loudness_increment = str(add)
-        save = {"select": selected_character, "addition": int(loudness_increment)}
+        save = {"select": selected_character, "addition": int(loudness_increment), "selected_audio_device": str(audio_device.currentText())}
+        program.audio_devices.selected_device=[audio_device.currentText(), program.audio_devices.device_dict[audio_device.currentText()]]
         save=json.loads(open("settings.json", "r").read()) | save
         with open("settings.json", "w") as a:
             a.write(json.dumps(save, indent=4, sort_keys=True))
@@ -87,6 +100,8 @@ def settings(ev="", root="", qtv=False, darkmode=False):
     layout.addWidget(number_entry)
     layout.addWidget(selection_label)
     layout.addWidget(selected_option)
+    layout.addWidget(selection_audio_device)
+    layout.addWidget(audio_device)
     layout.addWidget(save_button)
     if qtv:
         closee = QPushButton("close programm")
