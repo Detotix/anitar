@@ -111,8 +111,8 @@ def settings(ev="", root="", qtv=False, darkmode=False):
         message_box.exec_()
     save_button = QPushButton("Save")
     save_button.clicked.connect(save_data)
-    save_button = QPushButton("Toggle transparency")
-    save_button.clicked.connect(togglet)
+    transparency_button = QPushButton("Toggle transparency")
+    transparency_button.clicked.connect(togglet)
     layout = QVBoxLayout()
     layout.addWidget(number_label)
     layout.addWidget(number_entry)
@@ -120,6 +120,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
     layout.addWidget(selected_option)
     layout.addWidget(selection_audio_device)
     layout.addWidget(audio_device)
+    layout.addWidget(transparency_button)
     layout.addWidget(save_button)
     if qtv:
         closee = QPushButton("close programm")
