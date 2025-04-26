@@ -90,7 +90,10 @@ def update_image():
             program.shared.reload_char=False
             eventlist = []
             eventdict = {}
-            program.shared.charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
+            for nume,holderror in enumerate(program.shared.charerroronload):
+                program.char.charerror(holderror["type"], holderror["message"])
+                program.shared.charerroronload=program.shared.charerroronload[1:]
+            program.shared.charerrors=program.shared.dntclearcharerror
             try:
                 charbase = json.loads(open(f"chars/{program.shared.selection}/charbase.json", "r").read())
             except FileNotFoundError:
