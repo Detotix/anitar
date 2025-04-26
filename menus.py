@@ -42,7 +42,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
 
     new_window = QMainWindow()
     new_window.setWindowIcon(QIcon('app.ico'))
-    new_window.setWindowTitle("settings")
+    new_window.setWindowTitle("Settings")
     new_window.setGeometry(300, 200, 300, 200 if not qtv else 250)
     new_window.setFixedSize(new_window.size())
     windowsettings.darkmode(new_window,darkmode)
@@ -51,7 +51,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
     number_label = QLabel("Loudness Increment:")
     number_label.setSizePolicy(number_label.sizePolicy().Fixed, number_label.sizePolicy().Fixed)
     number_entry = QLineEdit()
-    selection_label = QLabel("select char:")
+    selection_label = QLabel("Select char:")
     selection_label.setSizePolicy(selection_label.sizePolicy().Fixed, selection_label.sizePolicy().Fixed)
     #getting chars for selection
     options = os.listdir("chars/")
@@ -60,7 +60,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
     selected_option.addItems(options)
     selected_option.setCurrentIndex(options.index(program.shared.selection))
     #audio label
-    selection_audio_device = QLabel("selected audio device: (work in progress)")
+    selection_audio_device = QLabel("Selected audio device: (Work in progress)")
     selection_audio_device.setSizePolicy(selection_audio_device.sizePolicy().Fixed, selection_audio_device.sizePolicy().Fixed)
     #audio device selection box
     audio_device = QComboBox()
@@ -104,14 +104,14 @@ def settings(ev="", root="", qtv=False, darkmode=False):
         with open("settings.json", "w") as a:
             a.write(json.dumps(save, indent=4, sort_keys=True))
         message_box = QMessageBox()
-        message_box.setWindowTitle("restart needed")
-        message_box.setText("to toggle transparency you need to restart the program")
+        message_box.setWindowTitle("Restart needed")
+        message_box.setText("To toggle transparency you need to restart the program")
         message_box.setIcon(QMessageBox.Information)
         message_box.setStandardButtons(QMessageBox.Ok)
         message_box.exec_()
     save_button = QPushButton("Save")
     save_button.clicked.connect(save_data)
-    transparency_button = QPushButton("Toggle transparency")
+    transparency_button = QPushButton("Toggle transparency (Work in progress)")
     transparency_button.clicked.connect(togglet)
     layout = QVBoxLayout()
     layout.addWidget(number_label)
@@ -123,7 +123,7 @@ def settings(ev="", root="", qtv=False, darkmode=False):
     layout.addWidget(transparency_button)
     layout.addWidget(save_button)
     if qtv:
-        closee = QPushButton("close programm")
+        closee = QPushButton("Close programm")
         closee.clicked.connect(close_p)
         layout.addWidget(closee)
     central_widget = QWidget()
@@ -167,7 +167,7 @@ def charerror(knownerrors,darkmode=False):
                 if extensions.extensions.extensions[error["event"].split(".")[0]]["status"]=="working":
                     button.clicked.connect(lambda: extensions.extension_event(error["event"].split(".")[0],error["event"].split(".")[1]))
                 else:
-                    program.char.charerror("warn", "cant do buttons anymore extension {0} is disabled".format(error["event"].split(".")[0]))
+                    program.char.charerror("warn", "Cant do buttons anymore extension {0} is disabled".format(error["event"].split(".")[0]))
             except:
                 #TODO add error message if event is not set
                 pass
