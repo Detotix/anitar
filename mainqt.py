@@ -221,6 +221,7 @@ try:
         scene.setBackgroundBrush(Qt.transparent)
         window.setWindowFlags(Qt.FramelessWindowHint)
         window.setAttribute(Qt.WA_TranslucentBackground, True)
+        program.shared.currenttransparency=True
     else:
         view.setStyleSheet("border: none;")
 except:

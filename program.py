@@ -4,6 +4,7 @@ class shared:
     charerrors=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
     reload_char=True
     reload_settings=True
+    currenttransparency=False
     settings={}
     selection={}
 class char:
@@ -18,7 +19,7 @@ class char:
                 message_box.setWindowTitle("There was an error while loading the character.")
                 message_box.setText(message)
                 message_box.setIcon(QMessageBox.Critical)
-                message_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+                message_box.setStandardButtons(QMessageBox.Ok)
                 message_box.exec_()
 
 class anitar:

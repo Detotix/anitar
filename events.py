@@ -1,6 +1,3 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QComboBox, QPushButton, QVBoxLayout, QWidget
-from PyQt5.QtCore import QEventLoop
-import sys
 import os
 import json
 import traceback

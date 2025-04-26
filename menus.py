@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QComboBox, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QComboBox, QPushButton, QVBoxLayout, QWidget, QMessageBox
 from PyQt5.QtCore import QEventLoop
 from PyQt5.QtGui import QIcon
 import sys
@@ -78,23 +78,41 @@ def settings(ev="", root="", qtv=False, darkmode=False):
     def close_root():
         end=True
         new_window.hide()
-
     def save_data():
         global close
         loudness_increment = number_entry.text()
         selected_character = selected_option.currentText()
         if not loudness_increment:
             loudness_increment = str(add)
-        save = {"select": selected_character, "addition": int(loudness_increment), "selected_audio_device": str(audio_device.currentText())}
+        save = {"select": selected_character, "addition": int(loudness_increment), "selected_audio_device": str(audio_device.currentText()), "transparent": program.shared.currenttransparency}
         program.audio_devices.selected_device=[audio_device.currentText(), program.audio_devices.device_dict[audio_device.currentText()]]
         save=json.loads(open("settings.json", "r").read()) | save
         with open("settings.json", "w") as a:
             a.write(json.dumps(save, indent=4, sort_keys=True))
         program.char.reload_char()
         new_window.close()
-
+    def togglet():
+        program.shared.currenttransparency=not program.shared.currenttransparency
+        global close
+        loudness_increment = number_entry.text()
+        selected_character = selected_option.currentText()
+        if not loudness_increment:
+            loudness_increment = str(add)
+        save = {"select": selected_character, "addition": int(loudness_increment), "selected_audio_device": str(audio_device.currentText()), "transparent": program.shared.currenttransparency}
+        program.audio_devices.selected_device=[audio_device.currentText(), program.audio_devices.device_dict[audio_device.currentText()]]
+        save=json.loads(open("settings.json", "r").read()) | save
+        with open("settings.json", "w") as a:
+            a.write(json.dumps(save, indent=4, sort_keys=True))
+        message_box = QMessageBox()
+        message_box.setWindowTitle("restart needed")
+        message_box.setText("to toggle transparency you need to restart the program")
+        message_box.setIcon(QMessageBox.Information)
+        message_box.setStandardButtons(QMessageBox.Ok)
+        message_box.exec_()
     save_button = QPushButton("Save")
     save_button.clicked.connect(save_data)
+    save_button = QPushButton("Toggle transparency")
+    save_button.clicked.connect(togglet)
     layout = QVBoxLayout()
     layout.addWidget(number_label)
     layout.addWidget(number_entry)
