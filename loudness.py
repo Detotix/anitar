@@ -2,19 +2,24 @@ import pyaudio
 import numpy as np
 import threading
 import program
+import os
 volume = None
 def getloudness():
     current_selected_device=["defaul", -1]
     volume_event = threading.Event()
 
     audio = pyaudio.PyAudio()
+    devfile=os.path.exists("devfile.txt")
     for i in range(audio.get_device_count()):
         device=audio.get_device_info_by_index(i)
-        if not device['maxInputChannels'] > 0:
+        if devfile:
+            open("devfile.txt", "a").write(str(audio.get_device_info_by_index(i))+"\n\n")
+        if not device["maxInputChannels"] > 0 or not device["hostApi"]==1:
             continue
         if not device["name"] in program.audio_devices.device_dict:
             program.audio_devices.device_dict[device["name"]]=i
             program.audio_devices.device_list.append(device["name"])
+    
     chunk_size = 1024
     sample_rate = 44100
     stream = audio.open(format=pyaudio.paInt16, channels=1, rate=sample_rate, input=True, frames_per_buffer=chunk_size)

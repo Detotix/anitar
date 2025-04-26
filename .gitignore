@@ -6,3 +6,4 @@ workingdir/**
 .vscode/
 __pycache__/
 settings.json
+devfile.txt
