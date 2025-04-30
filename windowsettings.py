@@ -3,12 +3,15 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QCombo
 from PyQt5.QtCore import QTimer, Qt, QEventLoop
 from PyQt5.QtGui import QIcon
 import platform
+
 import program
 import sys
 import menus
 import threading
 import time
 import extensions
+import ctypes
+from ctypes import wintypes
 class windowthingy:
     def setWindowTitle(arg):
         pass
@@ -24,6 +27,22 @@ def keyp(event):
     #opens the charerror menu if F3 key is pressed
     if event.key() == Qt.Key_F3:
         menus.charerror(program.shared.charerrors, darkmode=darkmode)
+
+
+
+
+def get_win_scale():
+    if platform.system().lower()=="windows":
+        shcore = ctypes.windll.shcore
+
+        monitor_handle = ctypes.windll.user32.MonitorFromWindow(0, 1) 
+
+        scale_factor = wintypes.UINT()
+        shcore.GetScaleFactorForMonitor(monitor_handle, ctypes.byref(scale_factor))
+
+        return float(scale_factor.value)/100
+    else:
+        return 1
 
 
 def darkmode(window, darkmode=False):
