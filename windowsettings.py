@@ -2,6 +2,22 @@ import ctypes
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtCore import QTimer, Qt
 import platform
+import ctypes
+from ctypes import wintypes
+
+def get_win_scale():
+    if platform.system().lower()=="windows":
+        shcore = ctypes.windll.shcore
+
+        monitor_handle = ctypes.windll.user32.MonitorFromWindow(0, 1) 
+
+        scale_factor = wintypes.UINT()
+        shcore.GetScaleFactorForMonitor(monitor_handle, ctypes.byref(scale_factor))
+
+        return float(scale_factor.value)/100
+    else:
+        return 1
+
 def darkmode(window, darkmode=False):
     if darkmode:
         if platform.system().lower()=="windows" or platform.system().lower()=="linux":
