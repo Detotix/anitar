@@ -14,7 +14,7 @@ def getloudness():
         device=audio.get_device_info_by_index(i)
         if devfile:
             open("devfile.txt", "a").write(str(audio.get_device_info_by_index(i))+"\n\n")
-        if not device["maxInputChannels"] > 0 or not device["hostApi"]==1:
+        if not device["maxInputChannels"] > 0 or not device["hostApi"]==2:
             continue
         if not device["name"] in program.audio_devices.device_dict:
             program.audio_devices.device_dict[device["name"]]=i
