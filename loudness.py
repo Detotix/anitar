@@ -1,5 +1,5 @@
 import pyaudio
-import numpy as np
+import array
 import threading
 import program
 import os
@@ -44,8 +44,8 @@ def getloudness():
             else:
                 stream = audio.open(format=pyaudio.paInt16, channels=1, rate=sample_rate, input=True, frames_per_buffer=chunk_size)
         data = stream.read(chunk_size, exception_on_overflow=False)
-        audio_data = np.frombuffer(data, dtype=np.int16)
-        volume = np.abs(audio_data).mean()
+        audio_data = array.array('h', data)
+        volume = sum(abs(x) for x in audio_data) / len(audio_data)
         volume_event.set()
 
     stream.stop_stream()
