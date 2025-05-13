@@ -1,5 +1,11 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMessageBox
+
+class wpos:
+    def x():
+        return 100
+    def y():
+        return 100   
 class shared:
     dntclearcharerror=[{"message":"this program isnt finished yet there could be things that dont work like intented","type":"info"}]
     charerrors=[]
@@ -9,6 +15,10 @@ class shared:
     settings={}
     selection={}
     charerroronload=[]
+    wpos=wpos
+    mainwindow=0
+    currentwindowsize=[400,400]
+    windowtitle="anitar"
 class char:
     def reload_char():
            shared.reload_char=True

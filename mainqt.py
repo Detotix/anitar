@@ -106,17 +106,18 @@ def update_image():
                     program.shared.settings["select"]="beispielchar1"
                     open("settings.json", "w").write(json.dumps(program.shared.settings,indent=4))
                     charbase = json.loads(open(f"chars/beispielchar1/charbase.json", "r").read())
-    if "transparent" in program.shared.settings:
-        if QApplication.instance().mouseButtons() & Qt.LeftButton and program.shared.settings["transparent"]:
-                try:
-                    wpos=window.cursor().pos()
-                    window.move(wpos.x(),wpos.y())
-                except:
-                    traceback.print_exc()
-                    wpos=""
-                    winmove=False
-        else:
-            winmove=False
+    #if "transparent" in program.shared.settings:
+    #    if QApplication.instance().mouseButtons() & Qt.LeftButton and program.shared.settings["transparent"]:
+    #            try:
+    #                wpos=window.cursor().pos()
+    #                program.shared.wpos=wpos
+    #                window.move(program.shared.wpos.x(),program.shared.wpos.y())
+    #            except:
+    #                traceback.print_exc()
+    #                wpos=""
+    #                winmove=False
+    #    else:
+    #        winmove=False
     
 
     try:
@@ -131,6 +132,7 @@ def update_image():
     scene.clear()
     imgs = []
     window.setWindowTitle("anitar 4 character " + program.shared.selection)
+    windowsettings.topbar_values.topbar_window.setWindowTitle("anitar 4 character " + program.shared.selection)
     try:
         backgroundcolor=charbase["backcolor"]
         window.setStyleSheet(f"background-color: {backgroundcolor};")
@@ -144,9 +146,12 @@ def update_image():
             raise "error"
         else:
             #sets window size to desired value if it is above 300x300 and below 900x900
+            program.shared.currentwindowsize=[int(size[0]),int(size[1])]
             window.setFixedSize(int(size[0]),int(size[1]))
+
     except:
         #sets the window size to 400x400 if nothing is set or something bad happened
+        program.shared.currentwindowsize=[400,400]
         window.setFixedSize(400,400)
     seimages = []
     if "events" not in charbase or "audio" not in charbase["events"]:
@@ -212,17 +217,17 @@ def update_image():
 global window
 app = QApplication(sys.argv)
 window = QMainWindow()
+program.shared.mainwindow=window
 scene = QGraphicsScene()
 view = QGraphicsView(scene)
 view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-#enables transparent mode
 try:
     if json.loads(open("settings.json").read())["transparent"]:
         view.setStyleSheet("background: transparent; border: none;")
         scene.setBackgroundBrush(Qt.transparent)
-        window.setWindowFlags(Qt.FramelessWindowHint)
+        window.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint)
         window.setAttribute(Qt.WA_TranslucentBackground, True)
         program.shared.currenttransparency=True
     else:
@@ -238,6 +243,12 @@ windowsettings.nofullscreen(window)
 window.setFixedSize(400,400)
 update_image()
 window.show()
+#enables transparent mode
+try:
+    if json.loads(open("settings.json").read())["transparent"]:
+        windowsettings.topbar()
+except:
+    pass
 t2 = threading.Thread(target=maineventhandler)
 t2.daemon = True
 t2.start()
