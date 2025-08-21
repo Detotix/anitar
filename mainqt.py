@@ -34,7 +34,7 @@ t1.start()
 #creates settings.json if it dosnt exist
 if not os.path.exists("settings.json"):
     with open("settings.json", "w") as createsettings:
-        createsettings.write('{\n"addition": 120,\n"select": "none",\n"selected_audio_device":"default"}')
+        createsettings.write('{\n"addition": 120,\n"select": "none",\n"selected_audio_device":"default","transparent":false}')
 
 #function for keyinputs
 def keyp(event):

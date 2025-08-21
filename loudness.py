@@ -2,6 +2,7 @@ import pyaudio
 import array
 import threading
 import program
+import platform
 import os
 volume = None
 def getloudness():
@@ -11,14 +12,22 @@ def getloudness():
     audio = pyaudio.PyAudio()
     devfile=os.path.exists("devfile.txt")
     for i in range(audio.get_device_count()):
-        device=audio.get_device_info_by_index(i)
-        if devfile:
-            open("devfile.txt", "a").write(str(audio.get_device_info_by_index(i))+"\n\n")
-        if not device["maxInputChannels"] > 0 or not device["hostApi"]==2:
-            continue
-        if not device["name"] in program.audio_devices.device_dict:
-            program.audio_devices.device_dict[device["name"]]=i
-            program.audio_devices.device_list.append(device["name"])
+        if platform.system().lower()=="windows" or platform.system().lower()==" linux":
+            device=audio.get_device_info_by_index(i)
+            print(device)
+            if devfile:
+                open("devfile.txt", "a").write(str(audio.get_device_info_by_index(i))+"\n\n")
+            if not device["maxInputChannels"] > 0 or not device["hostApi"]==2:
+                continue
+            if not device["name"] in program.audio_devices.device_dict:
+                program.audio_devices.device_dict[device["name"]]=i
+                program.audio_devices.device_list.append(device["name"])
+        if platform.system().lower()=="linux":
+            device=audio.get_device_info_by_index(i)
+            if device['defaultLowOutputLatency']>0.00005 and "hw" in device["name"]:
+                program.audio_devices.device_dict[device["name"]]=i
+                program.audio_devices.device_list.append(device["name"])
+
     
     chunk_size = 1024
     sample_rate = 44100
