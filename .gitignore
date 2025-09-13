@@ -1,0 +1,4 @@
+*.o
+.vscode/
+anitar.out
+old

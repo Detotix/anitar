@@ -1,0 +1,10 @@
+{
+    "layers": [
+        {
+            "event":"audio",
+            "loudnessdifference": 120,
+            "imagefiles": ["frame0000.png","frame0001.png","frame0002.png","frame0003.png","frame0004.png"]
+        }
+    ],
+    "size":"400x400"
+}
