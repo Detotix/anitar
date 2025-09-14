@@ -1,6 +1,5 @@
-#ifndef LOUDNESS_H
-#define LOUDNESS_H
+#ifndef PY_H
+#define PY_H
 
-// Declare the loudness thread function
 
 #endif

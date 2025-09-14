@@ -3,28 +3,30 @@
 #include "loudness.h"
 #include "shared.h"
 #include <SFML/Graphics.hpp>
+#include "events.h"
 
 int main() {
+    start();
     std::thread loudnessthread(loudnessget);
-    sf::RenderWindow window(sf::VideoMode(400, 400), "SFML Window");
+    std::thread eventhandlerthread(eventhandler);
+    sf::RenderWindow window(sf::VideoMode(400, 400), "Anitar 5");
 
-    // Main loop: runs until the window is closed
     while (window.isOpen()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        std::this_thread::sleep_for(std::chrono::milliseconds(timing::window));
         sf::Event event;
         while (window.pollEvent(event)) {
-            // Close window if requested
-            if (event.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed) {
+                Shared::open = false;
                 window.close();
+            }
         }
 
-        // Clear the window with black color
         window.clear(sf::Color::Black);
         std::cout << Shared::loudness << "   \r" << std::flush;
-        // Draw everything here...
 
-        // Display the contents of the window
         window.display();
     }
+    
+    eventhandlerthread.join();
     loudnessthread.join();
 }

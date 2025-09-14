@@ -2,3 +2,6 @@
 .vscode/
 anitar.out
 old
+chars/**
+!chars/beispielchar1/**
+!chars/beispielchar1

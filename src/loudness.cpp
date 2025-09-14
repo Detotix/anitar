@@ -30,7 +30,7 @@ int loudnessget() {
 
     int16_t buffer[chunkSize];
 
-    while (true) {
+    while (Shared::open) {
         if (Pa_ReadStream(stream, buffer, chunkSize) && Pa_ReadStream(stream, buffer, chunkSize) != paInputOverflowed) break;
 
         int sum = 0;
@@ -40,8 +40,7 @@ int loudnessget() {
 
         Shared::loudness = sum >> 7; 
 
-        // Optional: sleep only if needed
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(timing::loudness));
     }
 
     Pa_StopStream(stream);

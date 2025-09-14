@@ -16,6 +16,8 @@ def pos(volume,eventname="",eventdict={},cpos=[0,0]):
             cpos[0]+=eventdict[f"#{eventname}"]["xpos"]
     return [-cpos[0],-cpos[1]]
 def event(eventname,eventdict,volume,imgc,charbase,exts,ldif=100):
+    charbase=json.loads(charbase)
+    eventdict=json.loads(eventdict)
     try:
         posv=pos(volume,eventname,eventdict,charbase["events"][eventname]["pos"]["pos"])
     except:
@@ -119,7 +121,7 @@ def runevents(eventlist,eventdict,charbase,volume):
         except:
             eventdict[event]["timeticked"]=0.0
             eventdict[event]["timeslept"]=0.0
-    return eventlist, eventdict
+    return json.dumps(eventlist), eventdict
 
 def backwardscompatibility(name):
     if not os.path.exists(f"chars/{name}/charbase.json"):
