@@ -24,7 +24,6 @@ class Shared { // shared vars
         inline static json eventdict;
         inline static json settings;
         
-
         inline static std::vector<std::string> eventlist;
 };
 

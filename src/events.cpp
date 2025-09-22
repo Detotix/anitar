@@ -15,3 +15,8 @@ void start() {
 void eventhandler() {
     std::this_thread::sleep_for(std::chrono::milliseconds(timing::eventhandler));
 }
+
+json renderstring(std::string renderstring) {
+    json renderinfo;
+    return renderinfo;
+}

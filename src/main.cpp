@@ -9,8 +9,7 @@ int main() {
     start();
     std::thread loudnessthread(loudnessget);
     std::thread eventhandlerthread(eventhandler);
-    sf::RenderWindow window(sf::VideoMode(400, 400), "Anitar 5");
-
+    sf::RenderWindow window(sf::VideoMode(400, 400), "Anitar v5", sf::Style::Titlebar | sf::Style::Close);
     while (window.isOpen()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(timing::window));
         sf::Event event;
